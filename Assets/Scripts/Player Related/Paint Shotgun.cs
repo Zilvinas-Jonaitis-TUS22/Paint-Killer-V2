@@ -21,7 +21,10 @@ public class PaintShotgun : MonoBehaviour
     public CharacterController _controller;
     public StarterAssetsInputs _input;
 
-        void Update()
+    [Header("Effects")]
+    public ParticleSystem muzzleFlash; // Drag your particle system here
+
+    void Update()
     {
 
         if (!isPlayerBusy && !_input.sprint)
@@ -93,6 +96,12 @@ public class PaintShotgun : MonoBehaviour
         if (ammoLoaded > 0)
         {
             ammoLoaded--;
+
+            // Play muzzle flash effect
+            if (muzzleFlash != null)
+            {
+                muzzleFlash.Play();
+            }
 
             // Fire central ray
             FireRaycast(slugSpawnPoint.position);
