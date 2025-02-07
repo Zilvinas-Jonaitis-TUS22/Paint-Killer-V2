@@ -5,23 +5,34 @@ using UnityEngine;
 
 public class PaintShotgun : MonoBehaviour
 {
+    [Header("Weapon Mechanics")]
     public bool isPlayerBusy = false;
     public bool reloading = false;
     public int ammoLoaded = 0;
     public int reserveAmmo = 0;
-
     public Animator armsAnimator;
 
+    [Header("Slug Properties")]
+    public Transform slugSpawnPoint;
+    //public GameObject shell;
+    public float slugRange = 10f;
+
+    [Header("Scripts")]
     public CharacterController _controller;
     public StarterAssetsInputs _input;
 
         void Update()
     {
+
         if (!isPlayerBusy && !_input.sprint)
         {
             if (_input.shoot)
             {
                 ShootGun();
+            }
+            else
+            {
+                armsAnimator.SetBool("Shooting", false);
             }
             if (_input.reload)
             {
@@ -61,10 +72,11 @@ public class PaintShotgun : MonoBehaviour
     }
     public void ShootGun()
     {
+        Debug.Log(_input.shoot);
         if (ammoLoaded > 0)
         {
             reloading = false;
-            armsAnimator.SetTrigger("Shooting");
+            armsAnimator.SetBool("Shooting", true);
             armsAnimator.SetBool("Reloading", reloading);
         }
         
@@ -78,8 +90,46 @@ public class PaintShotgun : MonoBehaviour
 
     public void ShootShell()
     {
-        ammoLoaded--;
-        //fire shell here
+        if (ammoLoaded > 0)
+        {
+            ammoLoaded--;
+
+            // Fire central ray
+            FireRaycast(slugSpawnPoint.position);
+
+            // Define hexagonal offsets (relative positions)
+            Vector3[] offsets = new Vector3[]
+            {
+            new Vector3(0.15f, 0, 0.1f),   // Top Right
+            new Vector3(-0.15f, 0, 0.1f),  // Top Left
+            new Vector3(0.2f, 0, -0.1f),   // Mid-Right
+            new Vector3(-0.2f, 0, -0.1f),  // Mid-Left
+            new Vector3(0.12f, 0, -0.2f),  // Bottom Right
+            new Vector3(-0.12f, 0, -0.2f)  // Bottom Left
+            };
+
+            // Fire offset rays
+            foreach (Vector3 offset in offsets)
+            {
+                FireRaycast(slugSpawnPoint.position + offset);
+            }
+        }
+    }
+
+    // Function to handle individual raycast logic
+    private void FireRaycast(Vector3 startPosition)
+    {
+        RaycastHit hit;
+        Vector3 direction = slugSpawnPoint.forward;
+
+        // Draw Debug Ray in the editor
+        Debug.DrawRay(startPosition, direction * slugRange, Color.green, 1.0f);
+
+        // Perform the raycast
+        if (Physics.Raycast(startPosition, direction, out hit, slugRange, LayerMask.GetMask("Hurtable")))
+        {
+            Debug.Log("Success: Hit " + hit.collider.name);
+        }
     }
 
     public void BecomeBusy()
