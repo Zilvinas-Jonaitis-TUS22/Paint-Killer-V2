@@ -22,7 +22,8 @@ public class PaintShotgun : MonoBehaviour
     public StarterAssetsInputs _input;
 
     [Header("Effects")]
-    public ParticleSystem muzzleFlash; // Drag your particle system here
+    public ParticleSystem muzzleFlash;
+    public ParticleSystem muzzleFlash2;
 
     void Update()
     {
@@ -82,6 +83,11 @@ public class PaintShotgun : MonoBehaviour
             armsAnimator.SetBool("Shooting", true);
             armsAnimator.SetBool("Reloading", reloading);
         }
+        else
+        {
+            reloading = true;
+            armsAnimator.SetBool("Reloading", reloading);
+        }
         
     }
 
@@ -101,6 +107,7 @@ public class PaintShotgun : MonoBehaviour
             if (muzzleFlash != null)
             {
                 muzzleFlash.Play();
+                muzzleFlash2.Play();
             }
 
             // Fire central ray
@@ -131,13 +138,18 @@ public class PaintShotgun : MonoBehaviour
         RaycastHit hit;
         Vector3 direction = slugSpawnPoint.forward;
 
-        // Draw Debug Ray in the editor
         Debug.DrawRay(startPosition, direction * slugRange, Color.green, 1.0f);
 
-        // Perform the raycast
         if (Physics.Raycast(startPosition, direction, out hit, slugRange, LayerMask.GetMask("Hurtable")))
         {
-            Debug.Log("Success: Hit " + hit.collider.name);
+            //Debug.Log("Success: Hit " + hit.collider.name);
+
+            // Check if the hit object has EnemyHealth component
+            EnemyHealth enemy = hit.collider.GetComponent<EnemyHealth>();
+            if (enemy != null)
+            {
+                enemy.TakeDamage(1); // Deal 1 damage per ray hit
+            }
         }
     }
 
