@@ -9,6 +9,7 @@ public class PaintShotgun : MonoBehaviour
     public bool isPlayerBusy = false;
     public bool reloading = false;
     public int ammoLoaded = 0;
+    public int maximumAmmoLoaded = 7;
     public int reserveAmmo = 0;
     public Animator armsAnimator;
 
@@ -44,24 +45,33 @@ public class PaintShotgun : MonoBehaviour
             }
         }
 
-        if (ammoLoaded == 6 || reserveAmmo == 0 || _input.sprint)
+        if (ammoLoaded == maximumAmmoLoaded || reserveAmmo == 0 || _input.sprint)
         {
             isPlayerBusy = false;
             reloading = false;
             armsAnimator.SetBool("Reloading", reloading);
+            
+        }
+        if (_input.sprint)
+        {
+            armsAnimator.SetBool("Sprinting", true);
+        }
+        else
+        {
+            armsAnimator.SetBool("Sprinting", false);
         }
     }
 
     public void ReloadGun()
     {
         
-        if (!reloading && reserveAmmo > 0 && ammoLoaded < 7)
+        if (!reloading && reserveAmmo > 0 && ammoLoaded <= maximumAmmoLoaded)
         {
             reloading = true;
             armsAnimator.SetBool("Reloading" ,reloading);
             //reload gun
         }
-        else if (ammoLoaded == 6)
+        else if (ammoLoaded == maximumAmmoLoaded)
         {
             //max ammo in gun
         }
@@ -129,6 +139,10 @@ public class PaintShotgun : MonoBehaviour
             {
                 FireRaycast(slugSpawnPoint.position + offset);
             }
+        }
+        else
+        {
+            //No ammo
         }
     }
 
