@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using StarterAssets;
 using UnityEngine;
-using TMPro; // Add this for UI support
+using UnityEngine.UI; // For UI Image support
+using TMPro; // For UI text support
 
 public class PaintShotgun : MonoBehaviour
 {
@@ -17,6 +18,7 @@ public class PaintShotgun : MonoBehaviour
     [Header("UI Elements")]
     public TextMeshProUGUI ammoLoadedText;
     public TextMeshProUGUI reserveAmmoText;
+    public Image[] crosshairImages; // Array to store crosshair images
 
     [Header("Slug Properties")]
     public Transform slugSpawnPoint;
@@ -30,6 +32,9 @@ public class PaintShotgun : MonoBehaviour
     [Header("Effects")]
     public ParticleSystem muzzleFlash;
     public ParticleSystem muzzleFlash2;
+
+    private Color defaultCrosshairColor = Color.white;
+    private Color hitCrosshairColor = Color.red;
 
     void Start()
     {
@@ -62,6 +67,26 @@ public class PaintShotgun : MonoBehaviour
         }
 
         armsAnimator.SetBool("Sprinting", _input.sprint);
+
+        // **Check crosshair raycast target**
+        UpdateCrosshairColor();
+    }
+
+    private void UpdateCrosshairColor()
+    {
+        RaycastHit hit;
+        bool isHittingTarget = Physics.Raycast(slugSpawnPoint.position, slugSpawnPoint.forward, out hit, slugRange, LayerMask.GetMask("Hurtable"));
+
+        // Set crosshair color based on hit detection
+        Color targetColor = isHittingTarget ? hitCrosshairColor : defaultCrosshairColor;
+
+        foreach (Image crosshair in crosshairImages)
+        {
+            if (crosshair != null)
+            {
+                crosshair.color = targetColor;
+            }
+        }
     }
 
     public void ReloadGun()
@@ -158,7 +183,7 @@ public class PaintShotgun : MonoBehaviour
             if (enemy != null)
             {
                 enemy.TakeDamage(damage);
-                Debug.Log(damage);
+                //Debug.Log(damage);
             }
         }
     }
