@@ -3,14 +3,17 @@ using System.Collections;
 
 public class EnemyHealth : MonoBehaviour
 {
+    [Header("Health")]
     public float maxHealth = 7;
     public float currentHealth = 7;
 
+    [Header("Red Flash Effect")]
+    public float flashDuration = 0.5f; // Time to stay red
+    private Coroutine flashCoroutine;
+
+    [Header("References")]
     public Animator spriteAnimator;
     public SpriteRenderer spriteRenderer; // Reference to the SpriteRenderer
-    public float flashDuration = 0.5f; // Time to stay red
-
-    private Coroutine flashCoroutine;
 
     void Start()
     {

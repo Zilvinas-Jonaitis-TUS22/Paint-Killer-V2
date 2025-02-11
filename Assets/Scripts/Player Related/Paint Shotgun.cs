@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using StarterAssets;
 using UnityEngine;
+using TMPro; // Add this for UI support
 
 public class PaintShotgun : MonoBehaviour
 {
@@ -13,9 +14,12 @@ public class PaintShotgun : MonoBehaviour
     public int reserveAmmo = 0;
     public Animator armsAnimator;
 
+    [Header("UI Elements")]
+    public TextMeshProUGUI ammoLoadedText;
+    public TextMeshProUGUI reserveAmmoText;
+
     [Header("Slug Properties")]
     public Transform slugSpawnPoint;
-    //public GameObject shell;
     public float slugRange = 10f;
     public float pelletDamage = 1f;
 
@@ -27,9 +31,13 @@ public class PaintShotgun : MonoBehaviour
     public ParticleSystem muzzleFlash;
     public ParticleSystem muzzleFlash2;
 
+    void Start()
+    {
+        UpdateAmmoUI(); // Initialize UI on start
+    }
+
     void Update()
     {
-
         if (!isPlayerBusy && !_input.sprint)
         {
             if (_input.shoot)
@@ -51,43 +59,23 @@ public class PaintShotgun : MonoBehaviour
             isPlayerBusy = false;
             reloading = false;
             armsAnimator.SetBool("Reloading", reloading);
-            
         }
-        if (_input.sprint)
-        {
-            armsAnimator.SetBool("Sprinting", true);
-        }
-        else
-        {
-            armsAnimator.SetBool("Sprinting", false);
-        }
+
+        armsAnimator.SetBool("Sprinting", _input.sprint);
     }
 
     public void ReloadGun()
     {
-        
-        if (!reloading && reserveAmmo > 0 && ammoLoaded <= maximumAmmoLoaded)
+        if (!reloading && reserveAmmo > 0 && ammoLoaded < maximumAmmoLoaded)
         {
             reloading = true;
-            armsAnimator.SetBool("Reloading" ,reloading);
-            //reload gun
+            armsAnimator.SetBool("Reloading", reloading);
         }
-        else if (ammoLoaded == maximumAmmoLoaded)
-        {
-            //max ammo in gun
-        }
-        else if (reserveAmmo == 0)
-        {
-            //out of reserve ammo
-        }
-        else
-        {
-            //Cannot reload right now
-        }
+        UpdateAmmoUI(); // Update UI after reload
     }
+
     public void ShootGun()
     {
-        //Debug.Log(_input.shoot);
         if (ammoLoaded > 0)
         {
             reloading = false;
@@ -99,14 +87,18 @@ public class PaintShotgun : MonoBehaviour
             reloading = true;
             armsAnimator.SetBool("Reloading", reloading);
         }
-        
+        UpdateAmmoUI(); // Update UI after shooting
     }
 
     public void LoadShell()
     {
-        ammoLoaded ++;
-        reserveAmmo --;
-}
+        if (reserveAmmo > 0 && ammoLoaded < maximumAmmoLoaded)
+        {
+            ammoLoaded++;
+            reserveAmmo--;
+            UpdateAmmoUI(); // Update UI after loading
+        }
+    }
 
     public void ShootShell()
     {
@@ -114,40 +106,33 @@ public class PaintShotgun : MonoBehaviour
         {
             ammoLoaded--;
 
-            // Play muzzle flash effect
             if (muzzleFlash != null)
             {
                 muzzleFlash.Play();
                 muzzleFlash2.Play();
             }
 
-            // Fire central ray
             FireRaycast(slugSpawnPoint.position);
 
-            // Define hexagonal offsets (relative positions)
             Vector3[] offsets = new Vector3[]
             {
-            new Vector3(0.15f, 0, 0.1f),   // Top Right
-            new Vector3(-0.15f, 0, 0.1f),  // Top Left
-            new Vector3(0.2f, 0, -0.1f),   // Mid-Right
-            new Vector3(-0.2f, 0, -0.1f),  // Mid-Left
-            new Vector3(0.12f, 0, -0.2f),  // Bottom Right
-            new Vector3(-0.12f, 0, -0.2f)  // Bottom Left
+                new Vector3(0.15f, 0, 0.1f),
+                new Vector3(-0.15f, 0, 0.1f),
+                new Vector3(0.2f, 0, -0.1f),
+                new Vector3(-0.2f, 0, -0.1f),
+                new Vector3(0.12f, 0, -0.2f),
+                new Vector3(-0.12f, 0, -0.2f)
             };
 
-            // Fire offset rays
             foreach (Vector3 offset in offsets)
             {
                 FireRaycast(slugSpawnPoint.position + offset);
             }
-        }
-        else
-        {
-            //No ammo
+
+            UpdateAmmoUI(); // Update UI after shooting
         }
     }
 
-    // Function to handle individual raycast logic
     private void FireRaycast(Vector3 startPosition)
     {
         RaycastHit hit;
@@ -158,23 +143,21 @@ public class PaintShotgun : MonoBehaviour
         if (Physics.Raycast(startPosition, direction, out hit, slugRange, LayerMask.GetMask("Hurtable")))
         {
             float hitDistance = Vector3.Distance(slugSpawnPoint.position, hit.point);
-            float damage = pelletDamage; // Default damage
+            float damage = pelletDamage;
 
-            // Reduce damage by 50% if the hit distance is more than 66% of slugRange
             if (hitDistance > slugRange * 0.66f)
             {
-                damage *= 0.5f; // Reduce to 50% of normal damage
+                damage *= 0.5f;
             }
-            // Reduce damage by 25% if the hit distance is more than 33% of slugRange
             else if (hitDistance > slugRange * 0.33f)
             {
-                damage *= 0.75f; // Reduce to 75% of normal damage
+                damage *= 0.75f;
             }
 
             EnemyHealth enemy = hit.collider.GetComponent<EnemyHealth>();
             if (enemy != null)
             {
-                enemy.TakeDamage(damage); // Deal 1 damage per ray hit
+                enemy.TakeDamage(damage);
                 Debug.Log(damage);
             }
         }
@@ -188,5 +171,18 @@ public class PaintShotgun : MonoBehaviour
     public void BecomeUnBusy()
     {
         isPlayerBusy = false;
+    }
+
+    private void UpdateAmmoUI()
+    {
+        if (ammoLoadedText != null)
+        {
+            ammoLoadedText.text = $"{ammoLoaded} / {maximumAmmoLoaded}";
+        }
+
+        if (reserveAmmoText != null)
+        {
+            reserveAmmoText.text = $"{reserveAmmo}";
+        }
     }
 }

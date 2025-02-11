@@ -4,21 +4,24 @@ using System.Collections;
 
 public class EnemyAI : MonoBehaviour
 {
-    public Transform player;
-    public Transform sprite; // Reference to the child sprite object
+    [Header("Detection & Patrolling")]
     public float detectionRadius = 10f;
     public float lostSightDuration = 5f;
     public float roamRadius = 5f;
     public float patrolWaitTime = 3f;
     public float stoppingDistance = 2f;
 
-    //Pulse effect
+    [Header("Pulsating Effect")]
     public float pulseSpeed = 2f; // Speed of the pulsing effect
     public float pulseIntensity = 0.05f; // Scale change amount (5%)
     private Vector3 baseScale;
     private float randomOffset;
 
+    [Header("References")]
+    public Transform player;
+    public Transform sprite;
     private NavMeshAgent agent;
+
     private Vector3 originalPosition;
     private Vector3 lastKnownPosition;
     private bool playerInSight = false;
