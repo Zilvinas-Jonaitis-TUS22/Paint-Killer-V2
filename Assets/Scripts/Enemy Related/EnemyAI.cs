@@ -12,6 +12,12 @@ public class EnemyAI : MonoBehaviour
     public float patrolWaitTime = 3f;
     public float stoppingDistance = 2f;
 
+    //Pulse effect
+    public float pulseSpeed = 2f; // Speed of the pulsing effect
+    public float pulseIntensity = 0.05f; // Scale change amount (5%)
+    private Vector3 baseScale;
+    private float randomOffset;
+
     private NavMeshAgent agent;
     private Vector3 originalPosition;
     private Vector3 lastKnownPosition;
@@ -23,10 +29,19 @@ public class EnemyAI : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         originalPosition = transform.position;
         StartCoroutine(PatrolRoutine());
+
+        baseScale = sprite.localScale;
+        randomOffset = Random.Range(0f, Mathf.PI * 2); // Random phase shift
     }
 
+    void PulseEffect()
+    {
+        float scaleOffset = Mathf.Sin(Time.time * pulseSpeed + randomOffset) * pulseIntensity;
+        sprite.localScale = baseScale * (1 + scaleOffset);
+    }
     void Update()
     {
+        PulseEffect(); //Makes the sprite breathe
         FacePlayer(); // Make the sprite face the player
 
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);

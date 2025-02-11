@@ -17,6 +17,7 @@ public class PaintShotgun : MonoBehaviour
     public Transform slugSpawnPoint;
     //public GameObject shell;
     public float slugRange = 10f;
+    public float pelletDamage = 1f;
 
     [Header("Scripts")]
     public CharacterController _controller;
@@ -86,7 +87,7 @@ public class PaintShotgun : MonoBehaviour
     }
     public void ShootGun()
     {
-        Debug.Log(_input.shoot);
+        //Debug.Log(_input.shoot);
         if (ammoLoaded > 0)
         {
             reloading = false;
@@ -156,13 +157,25 @@ public class PaintShotgun : MonoBehaviour
 
         if (Physics.Raycast(startPosition, direction, out hit, slugRange, LayerMask.GetMask("Hurtable")))
         {
-            //Debug.Log("Success: Hit " + hit.collider.name);
+            float hitDistance = Vector3.Distance(slugSpawnPoint.position, hit.point);
+            float damage = pelletDamage; // Default damage
 
-            // Check if the hit object has EnemyHealth component
+            // Reduce damage by 50% if the hit distance is more than 66% of slugRange
+            if (hitDistance > slugRange * 0.66f)
+            {
+                damage *= 0.5f; // Reduce to 50% of normal damage
+            }
+            // Reduce damage by 25% if the hit distance is more than 33% of slugRange
+            else if (hitDistance > slugRange * 0.33f)
+            {
+                damage *= 0.75f; // Reduce to 75% of normal damage
+            }
+
             EnemyHealth enemy = hit.collider.GetComponent<EnemyHealth>();
             if (enemy != null)
             {
-                enemy.TakeDamage(1); // Deal 1 damage per ray hit
+                enemy.TakeDamage(damage); // Deal 1 damage per ray hit
+                Debug.Log(damage);
             }
         }
     }
