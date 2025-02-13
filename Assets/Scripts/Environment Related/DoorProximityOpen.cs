@@ -6,12 +6,16 @@ public class DoorProximityOpen : MonoBehaviour
 {
     [Header("Settings")]
     public Animator doorAnimator; // Assign the Animator component
+    public KrustyFollow krusty;
+    public bool opened = false;
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
+        if (other.gameObject.layer == LayerMask.NameToLayer("Player") && opened == false)
         {
             doorAnimator.SetBool("DoorOpened", true);
+            opened = true;
+            krusty.OnDoorOpened();
         }
     }
 
@@ -19,7 +23,7 @@ public class DoorProximityOpen : MonoBehaviour
     {
         if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
-            doorAnimator.SetBool("DoorOpened", false);
+            //doorAnimator.SetBool("DoorOpened", false);
         }
     }
 }

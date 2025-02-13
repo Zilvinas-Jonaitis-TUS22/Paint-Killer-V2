@@ -6,6 +6,7 @@ public class CollectPaintShotgun : MonoBehaviour
 {
     public bool collected;
     public Inventory playerInventory;
+    public KrustyFollow krusty;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -13,6 +14,7 @@ public class CollectPaintShotgun : MonoBehaviour
         if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
             collected = true;
+            krusty.FollowPlayer();
             if (playerInventory != null)
             {
                 playerInventory.shotgun = true;
