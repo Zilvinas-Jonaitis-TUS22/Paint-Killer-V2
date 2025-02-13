@@ -19,6 +19,8 @@ public class PaintShotgun : MonoBehaviour
     public TextMeshProUGUI ammoLoadedText;
     public TextMeshProUGUI reserveAmmoText;
     public Image[] crosshairImages; // Array to store crosshair images
+    private Color defaultCrosshairColor = Color.white;
+    private Color hitCrosshairColor = Color.red;
 
     [Header("Slug Properties")]
     public Transform slugSpawnPoint;
@@ -28,13 +30,13 @@ public class PaintShotgun : MonoBehaviour
     [Header("Scripts")]
     public CharacterController _controller;
     public StarterAssetsInputs _input;
+    public Inventory inventory;
 
     [Header("Effects")]
     public ParticleSystem muzzleFlash;
     public ParticleSystem muzzleFlash2;
 
-    private Color defaultCrosshairColor = Color.white;
-    private Color hitCrosshairColor = Color.red;
+    
 
     void Start()
     {
@@ -43,33 +45,36 @@ public class PaintShotgun : MonoBehaviour
 
     void Update()
     {
-        if (!isPlayerBusy && !_input.sprint)
+        if (inventory.shotgun)
         {
-            if (_input.shoot)
+            if (!isPlayerBusy && !_input.sprint)
             {
-                ShootGun();
+                if (_input.shoot)
+                {
+                    ShootGun();
+                }
+                else
+                {
+                    armsAnimator.SetBool("Shooting", false);
+                }
+                if (_input.reload)
+                {
+                    ReloadGun();
+                }
             }
-            else
+
+            if (ammoLoaded == maximumAmmoLoaded || reserveAmmo == 0 || _input.sprint)
             {
-                armsAnimator.SetBool("Shooting", false);
+                isPlayerBusy = false;
+                reloading = false;
+                armsAnimator.SetBool("Reloading", reloading);
             }
-            if (_input.reload)
-            {
-                ReloadGun();
-            }
+
+            armsAnimator.SetBool("Sprinting", _input.sprint);
+
+            // **Check crosshair raycast target**
+            UpdateCrosshairColor();
         }
-
-        if (ammoLoaded == maximumAmmoLoaded || reserveAmmo == 0 || _input.sprint)
-        {
-            isPlayerBusy = false;
-            reloading = false;
-            armsAnimator.SetBool("Reloading", reloading);
-        }
-
-        armsAnimator.SetBool("Sprinting", _input.sprint);
-
-        // **Check crosshair raycast target**
-        UpdateCrosshairColor();
     }
 
     private void UpdateCrosshairColor()
