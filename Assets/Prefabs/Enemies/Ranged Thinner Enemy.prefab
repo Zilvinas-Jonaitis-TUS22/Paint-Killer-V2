@@ -106,6 +106,37 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!1 &5165186352994966131
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 289834115637537967}
+  m_Layer: 7
+  m_Name: Projectile Spawnpoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &289834115637537967
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5165186352994966131}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.132, y: 0.591, z: -0.202}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3052535961231163751}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5983112084236546421
 GameObject:
   m_ObjectHideFlags: 0
@@ -120,6 +151,7 @@ GameObject:
   - component: {fileID: 856232641329381277}
   - component: {fileID: 4706735369792956039}
   - component: {fileID: 5178046092106192983}
+  - component: {fileID: 5007618348380492094}
   m_Layer: 7
   m_Name: Ranged Thinner Enemy
   m_TagString: Untagged
@@ -141,6 +173,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5031002135342605665}
+  - {fileID: 289834115637537967}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &3465229999502047421
@@ -197,7 +230,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: -1372625422
   m_Radius: 0.47
-  m_Speed: 2
+  m_Speed: 1.2
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -221,11 +254,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2f5943eccb80a541816ca6509ed9a3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 7
-  currentHealth: 7
+  maxHealth: 30
+  currentHealth: 30
   flashDuration: 0.5
-  spriteAnimator: {fileID: 0}
-  spriteRenderer: {fileID: 0}
+  spriteAnimator: {fileID: 5068480811709514039}
+  spriteRenderer: {fileID: 3359235190368063385}
 --- !u!114 &5178046092106192983
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -246,5 +279,21 @@ MonoBehaviour:
   pulseSpeed: 2
   pulseIntensity: 0.05
   player: {fileID: 0}
-  sprite: {fileID: 0}
-  rangedAttack: {fileID: 0}
+  sprite: {fileID: 5031002135342605665}
+  rangedAttack: {fileID: 5007618348380492094}
+--- !u!114 &5007618348380492094
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5983112084236546421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60ec3d2e162451e45a7530f0f040cc0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  projectilePrefab: {fileID: 1874627339108375145, guid: 863dc0bf48ca98442adf78767e123c9f, type: 3}
+  firePoint: {fileID: 289834115637537967}
+  projectileSpeed: 10
+  attackCooldown: 2
