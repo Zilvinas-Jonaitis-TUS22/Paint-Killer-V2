@@ -18,9 +18,9 @@ public class EnemyAI : MonoBehaviour
     private float randomOffset;
 
     [Header("References")]
-    public Transform player;
     public Transform sprite;
     private NavMeshAgent agent;
+    private Transform player;  // Link to the player automatically
 
     private Vector3 originalPosition;
     private Vector3 lastKnownPosition;
@@ -31,6 +31,18 @@ public class EnemyAI : MonoBehaviour
     {
         agent = GetComponent<NavMeshAgent>();
         originalPosition = transform.position;
+
+        // Automatically find the player by looking for the PlayerHealth script
+        PlayerHealth playerHealth = FindObjectOfType<PlayerHealth>();
+        if (playerHealth != null)
+        {
+            player = playerHealth.transform; // Assign the player's transform
+        }
+        else
+        {
+            Debug.LogError("No object with PlayerHealth script found in the scene.");
+        }
+
         StartCoroutine(PatrolRoutine());
 
         baseScale = sprite.localScale;
@@ -42,9 +54,13 @@ public class EnemyAI : MonoBehaviour
         float scaleOffset = Mathf.Sin(Time.time * pulseSpeed + randomOffset) * pulseIntensity;
         sprite.localScale = baseScale * (1 + scaleOffset);
     }
+
     void Update()
     {
-        PulseEffect(); //Makes the sprite breathe
+        // Ensure the player is assigned
+        if (player == null) return;
+
+        PulseEffect(); // Makes the sprite breathe
         FacePlayer(); // Make the sprite face the player
 
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);

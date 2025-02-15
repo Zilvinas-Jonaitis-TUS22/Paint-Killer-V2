@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 650842547354268594}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.209, y: 0.059, z: 0}
+  m_LocalPosition: {x: 0.209, y: 0.183, z: 0}
   m_LocalScale: {x: 0.73484, y: 0.73484, z: 0.73484}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -120,6 +120,7 @@ GameObject:
   - component: {fileID: 856232641329381277}
   - component: {fileID: 1435576955452111592}
   - component: {fileID: 4706735369792956039}
+  - component: {fileID: 7866004581070831588}
   m_Layer: 7
   m_Name: Basic Thinner Enemy (1)
   m_TagString: Untagged
@@ -136,7 +137,7 @@ Transform:
   m_GameObject: {fileID: 5983112084236546421}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -33.16, y: 1.768, z: 11.37}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -221,13 +222,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55132b1fdaaa5074099f1cb80f4b6817, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
-  sprite: {fileID: 5031002135342605665}
   detectionRadius: 15
   lostSightDuration: 5
   roamRadius: 5
   patrolWaitTime: 3.5
   stoppingDistance: 2
+  pulseSpeed: 2
+  pulseIntensity: 0.05
+  player: {fileID: 0}
+  sprite: {fileID: 5031002135342605665}
 --- !u!114 &4706735369792956039
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -240,3 +243,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2f5943eccb80a541816ca6509ed9a3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxHealth: 10
+  currentHealth: 10
+  flashDuration: 0.3
+  spriteAnimator: {fileID: 5068480811709514039}
+  spriteRenderer: {fileID: 3359235190368063385}
+--- !u!114 &7866004581070831588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5983112084236546421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e315ea0ec0629de41bbb13260fe977e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyNavMeshAgent: {fileID: 856232641329381277}
+  player: {fileID: 0}
+  sphereRadius: 1.2
+  sphereDistance: 0
+  damageAmount: 1
+  damageInterval: 1
