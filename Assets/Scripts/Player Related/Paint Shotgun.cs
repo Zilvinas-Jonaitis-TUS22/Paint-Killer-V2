@@ -21,6 +21,7 @@ public class PaintShotgun : MonoBehaviour
     public Image[] crosshairImages; // Array to store crosshair images
     private Color defaultCrosshairColor = Color.white;
     private Color hitCrosshairColor = Color.red;
+    public ShotgunUI shotgunUI;
 
     [Header("Slug Properties")]
     public Transform slugSpawnPoint;
@@ -75,6 +76,11 @@ public class PaintShotgun : MonoBehaviour
             // **Check crosshair raycast target**
             UpdateCrosshairColor();
         }
+    }
+
+    public void ExpandCrosshair()
+    {
+        shotgunUI.TriggerExpand();
     }
 
     private void UpdateCrosshairColor()
