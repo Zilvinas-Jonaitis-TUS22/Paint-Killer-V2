@@ -26,6 +26,30 @@ public class ShotgunUI : MonoBehaviour
         }
     }
 
+    public void TriggerNarrow()
+    {
+        if (animator != null)
+        {
+            animator.SetBool("Narrow", true);
+        }
+        else
+        {
+            Debug.LogWarning("Animator reference is missing in ShotgunUI.");
+        }
+    }
+
+    public void TriggerUnNarrow()
+    {
+        if (animator != null)
+        {
+            animator.SetBool("Narrow", false);
+        }
+        else
+        {
+            Debug.LogWarning("Animator reference is missing in ShotgunUI.");
+        }
+    }
+
     public void Update()
     {
         if (_inventory.shotgun == true)
