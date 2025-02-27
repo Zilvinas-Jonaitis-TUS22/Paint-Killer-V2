@@ -11,6 +11,9 @@ public class RangedEnemyAI : MonoBehaviour
     public float patrolWaitTime = 3f;
     public float stoppingDistance = 2f;
 
+    [Header("Range Attack")]
+    public float rangedAttackDistance = 5f;
+
     [Header("Pulsating Effect")]
     public float pulseSpeed = 2f;
     public float pulseIntensity = 0.05f;
@@ -18,11 +21,12 @@ public class RangedEnemyAI : MonoBehaviour
     private float randomOffset;
 
     [Header("References")]
-    public Transform player;
     public Transform sprite;
     private NavMeshAgent agent;
-    public RangedAttack rangedAttack; // Reference to the RangedAttack script
+    public RangedAttack rangedAttack;
+    public Animator spriteAnimator;
 
+    private Transform player;  // Link to the player automatically
     private Vector3 originalPosition;
     private Vector3 lastKnownPosition;
     private bool playerInSight = false;
@@ -32,10 +36,22 @@ public class RangedEnemyAI : MonoBehaviour
     {
         agent = GetComponent<NavMeshAgent>();
         originalPosition = transform.position;
+
+        // Automatically find the player by looking for the PlayerHealth script
+        PlayerHealth playerHealth = FindObjectOfType<PlayerHealth>();
+        if (playerHealth != null)
+        {
+            player = playerHealth.transform; // Assign the player's transform
+        }
+        else
+        {
+            Debug.LogError("No object with PlayerHealth script found in the scene.");
+        }
+
         StartCoroutine(PatrolRoutine());
 
         baseScale = sprite.localScale;
-        randomOffset = Random.Range(0f, Mathf.PI * 2); // Random phase shift
+        randomOffset = Random.Range(0f, Mathf.PI * 2);
     }
 
     void PulseEffect()
@@ -46,6 +62,9 @@ public class RangedEnemyAI : MonoBehaviour
 
     void Update()
     {
+        // Ensure the player is assigned
+        if (player == null) return;
+
         PulseEffect();
         FacePlayer();
 
@@ -59,10 +78,10 @@ public class RangedEnemyAI : MonoBehaviour
             lastKnownPosition = player.position;
             agent.SetDestination(player.position);
 
-            // Trigger ranged attack when the player is in range
-            if (distanceToPlayer <= stoppingDistance)
+            // Use rangedAttackDistance instead of stoppingDistance
+            if (distanceToPlayer <= rangedAttackDistance && (Time.time - rangedAttack.lastAttackTime >= rangedAttack.attackCooldown))
             {
-                rangedAttack.FireProjectile(player.position); // Fire projectile at player
+                spriteAnimator.SetBool("Shooting", true);
             }
         }
         else if (playerInSight)
@@ -71,6 +90,19 @@ public class RangedEnemyAI : MonoBehaviour
             searchingForPlayer = true;
             StartCoroutine(LostPlayerRoutine());
         }
+    }
+
+    public void ShootProjectile()
+    {
+        if (player != null)
+        {
+            rangedAttack.FireProjectile(player.position); // Fire projectile at player
+        }
+    }
+
+    public void StopShooting()
+    {
+        spriteAnimator.SetBool("Shooting", false);
     }
 
     void FacePlayer()
@@ -128,5 +160,9 @@ public class RangedEnemyAI : MonoBehaviour
             Gizmos.color = Color.yellow;
             Gizmos.DrawSphere(lastKnownPosition, 0.5f);
         }
+
+        // Debug sphere for ranged attack distance
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, rangedAttackDistance);
     }
 }
