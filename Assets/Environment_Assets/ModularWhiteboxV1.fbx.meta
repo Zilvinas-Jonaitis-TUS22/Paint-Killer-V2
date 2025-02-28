@@ -3,7 +3,32 @@ guid: e0df89d30a03f704ba61ceb0e1c7079c
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Glass
+    second: {fileID: 2100000, guid: 6813fd02dac602a4aa0e34a7d63185ee, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Interior
+    second: {fileID: 2100000, guid: 233a317262d789844b6214a6a011f307, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: LeafyGreen
+    second: {fileID: 2100000, guid: 7d220e02786dc5548a7a8be5150af683, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: OutOfBounds
+    second: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: standardSurface1
+    second: {fileID: 2100000, guid: 233a317262d789844b6214a6a011f307, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
