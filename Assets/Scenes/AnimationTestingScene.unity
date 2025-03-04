@@ -481,6 +481,7 @@ MonoBehaviour:
   CinemachineCameraTarget: {fileID: 345170130289432445}
   TopClamp: 89
   BottomClamp: -89
+  isGrappled: 0
 --- !u!4 &2289532098245766111
 Transform:
   m_ObjectHideFlags: 3
@@ -6010,6 +6011,7 @@ MonoBehaviour:
   sprint: 0
   shoot: 0
   reload: 0
+  grapple: 0
   analogMovement: 0
   cursorLocked: 1
   cursorInputForLook: 1
@@ -10877,9 +10879,73 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8102182081140060419}
     m_Modifications:
+    - target: {fileID: 1015964050736676738, guid: 1da8a1beb41606b458bc2334a174518c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1017911712100344680, guid: 1da8a1beb41606b458bc2334a174518c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2191860331372361601, guid: 1da8a1beb41606b458bc2334a174518c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2852787461801917296, guid: 1da8a1beb41606b458bc2334a174518c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 3648589054697270233, guid: 1da8a1beb41606b458bc2334a174518c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 3731232730560717640, guid: 1da8a1beb41606b458bc2334a174518c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 3798043670636939808, guid: 1da8a1beb41606b458bc2334a174518c, type: 3}
       propertyPath: m_Name
       value: PennyArm+ShotgunRigAnimation V2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5335405302021636803, guid: 1da8a1beb41606b458bc2334a174518c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5384231896546218546, guid: 1da8a1beb41606b458bc2334a174518c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5639307468175247731, guid: 1da8a1beb41606b458bc2334a174518c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5819880825130306150, guid: 1da8a1beb41606b458bc2334a174518c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6100878584820138368, guid: 1da8a1beb41606b458bc2334a174518c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6496611992819174971, guid: 1da8a1beb41606b458bc2334a174518c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7237777712119121632, guid: 1da8a1beb41606b458bc2334a174518c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7538870907969101466, guid: 1da8a1beb41606b458bc2334a174518c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 8109430846221217127, guid: 1da8a1beb41606b458bc2334a174518c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 8959231845566896342, guid: 1da8a1beb41606b458bc2334a174518c, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8983907318719663319, guid: 1da8a1beb41606b458bc2334a174518c, type: 3}
       propertyPath: m_LocalPosition.x
