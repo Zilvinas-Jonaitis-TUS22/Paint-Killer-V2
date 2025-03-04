@@ -17,6 +17,9 @@ namespace StarterAssets
         public bool shoot;
         public bool reload;
 
+        [Header("Grapple Input Values")]
+        public bool grapple;
+
         [Header("Movement Settings")]
 		public bool analogMovement;
 
@@ -57,6 +60,10 @@ namespace StarterAssets
         {
             ReloadInput(value.isPressed);
         }
+        public void OnGrapple(InputValue value)
+        {
+            GrappleInput(value.isPressed);
+        }
 #endif
 
 
@@ -88,6 +95,11 @@ namespace StarterAssets
         public void ReloadInput(bool newReloadState)
         {
             reload = newReloadState;
+        }
+
+        public void GrappleInput(bool newReloadState)
+        {
+            grapple = newReloadState;
         }
 
         private void OnApplicationFocus(bool hasFocus)

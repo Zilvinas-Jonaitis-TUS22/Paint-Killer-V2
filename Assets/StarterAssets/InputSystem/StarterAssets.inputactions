@@ -272,7 +272,7 @@
                     "name": "",
                     "id": "8816c83d-c02f-4bf9-bf30-bde53fd1a946",
                     "path": "<Mouse>/rightButton",
-                    "interactions": "",
+                    "interactions": "Press(behavior=2)",
                     "processors": "",
                     "groups": "",
                     "action": "Grapple",
