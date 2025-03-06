@@ -217,7 +217,7 @@ public class PaintShotgun : MonoBehaviour
         isPlayerBusy = false;
     }
 
-    private void UpdateAmmoUI()
+    public void UpdateAmmoUI()
     {
         if (ammoLoadedText != null)
         {

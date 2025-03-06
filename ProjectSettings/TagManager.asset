@@ -7,6 +7,7 @@ TagManager:
   - CinemachineTarget
   - Bullet
   - Health
+  - Ammo
   layers:
   - Default
   - TransparentFX

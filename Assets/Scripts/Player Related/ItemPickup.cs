@@ -5,24 +5,37 @@ using UnityEngine;
 
 public class ItemPickup : MonoBehaviour
 {
-    private PlayerHealth PlayerHealth;
-
+    private PlayerHealth playerHealth;
+    public PaintShotgun playerShotgun;
+    public int ammoAmount;
  
     void Start()
     {
-        PlayerHealth = GetComponent<PlayerHealth>();
+        playerHealth = GetComponent<PlayerHealth>();
+       
+
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if(other.CompareTag("Health"))
         {
-            if (PlayerHealth.health< PlayerHealth.maxHealth)
+            if (playerHealth.health < playerHealth.maxHealth)
             {
-                PlayerHealth.HealHealth(1);
+                playerHealth.HealHealth(1);
                 Destroy(other.gameObject);
-                Debug.Log(PlayerHealth.health);
+                //Debug.Log(playerHealth.health);
             }
+        }
+        if (other.CompareTag("Ammo"))
+        {
+
+            Debug.Log("picked up ammo");
+            playerShotgun.reserveAmmo += ammoAmount;
+                playerShotgun.UpdateAmmoUI();
+                Destroy(other.gameObject);
+           
+            
         }
     }
 
