@@ -41,6 +41,7 @@ public class PlayerHealth : MonoBehaviour
         health += heal;
         health = Mathf.Min(health, maxHealth);
         UpdateHeartUI();
+        Debug.Log("updating health");
     }
 
     public void TakeDamage(int damage)
