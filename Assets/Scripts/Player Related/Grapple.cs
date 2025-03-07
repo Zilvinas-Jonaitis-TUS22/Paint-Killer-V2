@@ -27,6 +27,7 @@ public class Grapple : MonoBehaviour
 
     [Header("Grapple Properties")]
     public Transform grappleOrigin; // Where the grapple ray is cast from
+    public Transform grappleLineOrigin;
 
     [Header("Effects")]
     public LineRenderer grappleLine;           // Visualizes the grapple rope
@@ -172,7 +173,7 @@ public class Grapple : MonoBehaviour
     {
         if (grappleLine != null)
         {
-            grappleLine.SetPosition(0, grappleOrigin.position);
+            grappleLine.SetPosition(0, grappleLineOrigin.position);
             grappleLine.SetPosition(1, grapplePoint);
         }
     }

@@ -10903,6 +10903,46 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 3795634687651859254, guid: 1da8a1beb41606b458bc2334a174518c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.0023411512
+      objectReference: {fileID: 0}
+    - target: {fileID: 3795634687651859254, guid: 1da8a1beb41606b458bc2334a174518c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.28099063
+      objectReference: {fileID: 0}
+    - target: {fileID: 3795634687651859254, guid: 1da8a1beb41606b458bc2334a174518c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.012703076
+      objectReference: {fileID: 0}
+    - target: {fileID: 3795634687651859254, guid: 1da8a1beb41606b458bc2334a174518c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.9894489
+      objectReference: {fileID: 0}
+    - target: {fileID: 3795634687651859254, guid: 1da8a1beb41606b458bc2334a174518c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.060372774
+      objectReference: {fileID: 0}
+    - target: {fileID: 3795634687651859254, guid: 1da8a1beb41606b458bc2334a174518c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.041170802
+      objectReference: {fileID: 0}
+    - target: {fileID: 3795634687651859254, guid: 1da8a1beb41606b458bc2334a174518c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.1251035
+      objectReference: {fileID: 0}
+    - target: {fileID: 3795634687651859254, guid: 1da8a1beb41606b458bc2334a174518c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -7.456
+      objectReference: {fileID: 0}
+    - target: {fileID: 3795634687651859254, guid: 1da8a1beb41606b458bc2334a174518c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 3.838
+      objectReference: {fileID: 0}
+    - target: {fileID: 3795634687651859254, guid: 1da8a1beb41606b458bc2334a174518c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 14.162
+      objectReference: {fileID: 0}
     - target: {fileID: 3798043670636939808, guid: 1da8a1beb41606b458bc2334a174518c, type: 3}
       propertyPath: m_Name
       value: PennyArm+ShotgunRigAnimation V2
