@@ -10,11 +10,11 @@ public class Grapple : MonoBehaviour
     public bool isGrappling = false;
     public float grappleRange = 15f;
     public float grappleSpeed = 10f;
-    public bool grappable = false; // New bool to track if a surface is within range
+    public bool grappable = false;
 
     [Header("Grapple Timing")]
     public float maxGrappleTime = 3f;
-    public float grappleTimer = 0f;
+    private float grappleTimer = 0f;
 
     [Header("Grapple Cooldown")]
     public float grappleCooldownDuration = 3f;
@@ -25,10 +25,13 @@ public class Grapple : MonoBehaviour
     public float maxPropulsionDelay = 2f;
     private float propulsionDelayTimer = 0f;
     private float propulsionDelayDuration = 0f;
+    private bool grapplePullTriggered = false; // Flag to track if momentum has started
 
     [Header("Grapple Properties")]
     public Transform grappleOrigin;
     public Transform grappleLineOrigin;
+    public Animator armsAnimator;
+    public GameObject grappleHead; // NEW: Reference to the grapple head model
 
     [Header("Effects")]
     public LineRenderer grappleLine;
@@ -55,6 +58,11 @@ public class Grapple : MonoBehaviour
         {
             grappleLine.positionCount = 0;
         }
+
+        if (grappleHead != null)
+        {
+            grappleHead.SetActive(true); // Ensure the grapple head is visible at start
+        }
     }
 
     void Update()
@@ -62,11 +70,14 @@ public class Grapple : MonoBehaviour
         if (_input.grapple)
         {
             isEquipped = true;
+            armsAnimator.SetBool("GrappleEquipped", true);
         }
         else
         {
             isEquipped = false;
+            armsAnimator.SetBool("GrappleEquipped", false);
         }
+
         // Constantly check if there's a valid grapple surface
         CheckForGrappleSurface();
 
@@ -80,6 +91,7 @@ public class Grapple : MonoBehaviour
         if (_input.grapple && !isGrappling && CanGrapple() && isEquipped && _input.shoot)
         {
             AttemptGrapple();
+            armsAnimator.SetBool("Grappling", true);
         }
 
         if (isGrappling)
@@ -93,11 +105,12 @@ public class Grapple : MonoBehaviour
 
             UpdateGrappleLine();
 
+            // Wait for propulsion delay before applying momentum
             if (propulsionDelayTimer < propulsionDelayDuration)
             {
                 propulsionDelayTimer += Time.deltaTime;
             }
-            else
+            else if (grapplePullTriggered) // Only move when GrapplePull() is called
             {
                 PullPlayerTowardsGrapple();
             }
@@ -109,6 +122,11 @@ public class Grapple : MonoBehaviour
                 EndGrapple();
             }
         }
+    }
+
+    public void GrapplingOff()
+    {
+        armsAnimator.SetBool("Grappling", false);
     }
 
     private bool CanGrapple()
@@ -126,6 +144,7 @@ public class Grapple : MonoBehaviour
             grappleTimer = 0f;
             propulsionDelayTimer = 0f;
             grappleCooldownTimer = 0f;
+            grapplePullTriggered = false; // Reset flag until animation triggers it
 
             float distance = Vector3.Distance(transform.position, grapplePoint);
             propulsionDelayDuration = Mathf.Lerp(minPropulsionDelay, maxPropulsionDelay, Mathf.Clamp01(distance / grappleRange));
@@ -146,6 +165,11 @@ public class Grapple : MonoBehaviour
                 grappleLine.positionCount = 2;
                 grappleLine.SetPosition(0, grappleOrigin.position);
                 grappleLine.SetPosition(1, grapplePoint);
+            }
+
+            if (grappleHead != null)
+            {
+                grappleHead.SetActive(false); // Hide the grapple head when the line is active
             }
         }
     }
@@ -169,6 +193,7 @@ public class Grapple : MonoBehaviour
     {
         isGrappling = false;
         grappleTimer = 0f;
+        grapplePullTriggered = false; // Reset flag when grapple ends
 
         if (firstPersonController != null)
         {
@@ -179,11 +204,20 @@ public class Grapple : MonoBehaviour
         {
             grappleLine.positionCount = 0;
         }
+
+        if (grappleHead != null)
+        {
+            grappleHead.SetActive(true); // Show the grapple head again when the grapple ends
+        }
     }
 
     void CheckForGrappleSurface()
     {
-        // Cast a ray to check if there's a valid grapple surface
         grappable = Physics.Raycast(grappleOrigin.position, grappleOrigin.forward, grappleRange, grappableLayer);
+    }
+
+    public void GrapplePull()
+    {
+        grapplePullTriggered = true; // Called via animation event
     }
 }
