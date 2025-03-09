@@ -60,14 +60,21 @@ namespace StarterAssets
         private float _cinemachineTargetPitch;
 
         // player
-        private float _speed;
+        public float _speed;
         private float _rotationVelocity;
-        private float _verticalVelocity;
-        private float _terminalVelocity = 53.0f;
+        public float _verticalVelocity;
+        public float _terminalVelocity = 53.0f;
+        
+        //DoubleJump
+        public bool _canDoubleJump;
+        public bool hasJumped = false; // Flag to check if the player has normal jumped
+        public bool hasDoubleJumped = false;  // Flag to check if the player has double jumped
+        private float _doubleJumpDelayTimer = 0.0f;  // Timer for the delay before double jump is allowed
+        private const float DoubleJumpDelay = 0.1f;  // The delay (0.1 seconds) before allowing the double jump
 
         // timeout deltatime
-        private float _jumpTimeoutDelta;
-        private float _fallTimeoutDelta;
+        public float _jumpTimeoutDelta;
+        public float _fallTimeoutDelta;
 
 #if ENABLE_INPUT_SYSTEM
         private PlayerInput _playerInput;
@@ -148,7 +155,11 @@ namespace StarterAssets
                 _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, BottomClamp, TopClamp);
 
                 // Update Cinemachine camera target pitch
-                CinemachineCameraTarget.transform.localRotation = Quaternion.Euler(_cinemachineTargetPitch, 0.0f, 0.0f);
+                // CinemachineCameraTarget.transform.localRotation = Quaternion.Euler(_cinemachineTargetPitch, 0.0f, 0.0f);
+                // (Update to allow camera tilt:
+                Vector3 newRotation = CinemachineCameraTarget.transform.localEulerAngles;
+                newRotation.x = _cinemachineTargetPitch; // Only update X
+                CinemachineCameraTarget.transform.localEulerAngles = newRotation;
 
                 // rotate the player left and right
                 transform.Rotate(Vector3.up * _rotationVelocity);
@@ -197,7 +208,7 @@ namespace StarterAssets
             _controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
         }
 
-        private void JumpAndGravity()
+        /*private void JumpAndGravity()
         {
             if (Grounded)
             {
@@ -225,6 +236,69 @@ namespace StarterAssets
                 _input.jump = false;
             }
 
+            if (_verticalVelocity < _terminalVelocity)
+            {
+                _verticalVelocity += Gravity * Time.deltaTime;
+            }
+        }*/
+
+        //JumpAndGravity but with Double Jump Functionality:
+        private void JumpAndGravity()
+        {
+            // Reset variables when grounded
+            if (Grounded)
+            {
+                _fallTimeoutDelta = FallTimeout;
+                hasJumped = false;  // Reset jump flag when grounded
+                hasDoubleJumped = false;  // Reset double jump flag when grounded
+                _doubleJumpDelayTimer = 0.0f;  // Reset the double jump delay timer
+
+                // Reset vertical velocity when grounded
+                if (_verticalVelocity < 0.0f)
+                {
+                    _verticalVelocity = -2f;
+                }
+
+                // Regular jump
+                if (_input.jump && _jumpTimeoutDelta <= 0.0f && Grounded)
+                {
+                    _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);  // Apply jump force
+                    hasJumped = true;  // Set hasJumped to true after a standard jump
+                    _doubleJumpDelayTimer = DoubleJumpDelay;  // Start the delay timer before allowing double jump
+                }
+
+                if (_jumpTimeoutDelta >= 0.0f)
+                {
+                    _jumpTimeoutDelta -= Time.deltaTime;
+                }
+            }
+            else
+            {
+                // In the air
+                if (_doubleJumpDelayTimer <= 0.0f && _input.jump && hasJumped && !hasDoubleJumped)  // If delay has passed and the player has jumped
+                {
+                    _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);  // Apply double jump force
+                    hasDoubleJumped = true;  // Set hasDoubleJumped to true after the second jump
+                    _canDoubleJump = false;  // Disable further double jumps
+                    hasJumped = false;  // Just to reset the jump flag to avoid loop
+                }
+
+                // Decrease the double jump delay timer when in the air
+                if (_doubleJumpDelayTimer > 0.0f)
+                {
+                    _doubleJumpDelayTimer -= Time.deltaTime;
+                }
+
+                // Set _jumpTimeoutDelta when in the air for the second jump
+                if (_fallTimeoutDelta >= 0.0f)
+                {
+                    _fallTimeoutDelta -= Time.deltaTime;
+                }
+
+                _input.jump = false;  // Reset jump input to prevent spamming
+            }
+
+            // Apply gravity to the player
             if (_verticalVelocity < _terminalVelocity)
             {
                 _verticalVelocity += Gravity * Time.deltaTime;
