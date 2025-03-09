@@ -5,12 +5,12 @@ using UnityEngine;
 public class ShotgunUI : MonoBehaviour
 {
     public Animator animator; // Public reference to the Animator
-    private Inventory _inventory; // Reference to Inventory script
+    private Grapple GrappleScript; // Reference to Inventory script
 
     void Start()
     {
         // Find the Inventory script in the scene
-        _inventory = FindObjectOfType<Inventory>();
+        GrappleScript = FindObjectOfType<Grapple>();
     }
 
     // Function to trigger the "Expand" parameter in the Animator
@@ -52,7 +52,7 @@ public class ShotgunUI : MonoBehaviour
 
     public void Update()
     {
-        if (_inventory.shotgun == true)
+        if (!GrappleScript.isEquipped)
         {
             animator.SetBool("Equipped", true);
         }

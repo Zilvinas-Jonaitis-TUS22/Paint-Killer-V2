@@ -14,6 +14,7 @@ public class PaintShotgun : MonoBehaviour
     public int maximumAmmoLoaded = 7;
     public int reserveAmmo = 0;
     public Animator armsAnimator;
+    public bool isEquipped = true;
 
     [Header("UI Elements")]
     public TextMeshProUGUI ammoLoadedText;
@@ -31,7 +32,7 @@ public class PaintShotgun : MonoBehaviour
     [Header("Scripts")]
     public CharacterController _controller;
     public StarterAssetsInputs _input;
-    public Inventory inventory;
+    public Grapple GrappleScript;
 
     [Header("Effects")]
     public ParticleSystem muzzleFlash;
@@ -48,11 +49,9 @@ public class PaintShotgun : MonoBehaviour
     {
         UpdateCrosshairColor();
 
-        if (inventory.shotgun)
-        {
             if (!isPlayerBusy && !_input.sprint)
             {
-                if (_input.shoot)
+                if (_input.shoot && !GrappleScript.isEquipped)
                 {
                     ShootGun();
                 }
@@ -74,7 +73,7 @@ public class PaintShotgun : MonoBehaviour
             }
 
             armsAnimator.SetBool("Sprinting", _input.sprint);
-        }
+        
     }
 
     public void ExpandCrosshair()

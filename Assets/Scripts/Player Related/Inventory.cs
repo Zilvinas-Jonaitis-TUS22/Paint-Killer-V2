@@ -4,10 +4,6 @@ using UnityEngine;
 
 public class Inventory : MonoBehaviour
 {
-    [Header("Currently Equipped")]
-    public bool hands = true;
-    public bool shotgun = false;
-    public bool grapple = false;
 
     // Start is called before the first frame update
     void Start()
@@ -18,19 +14,6 @@ public class Inventory : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (shotgun)
-        {
-            hands = false;
-            grapple = false;
-        }
-        else if (grapple)
-        {
-            hands = false;
-            shotgun = false;
-        }
-        else
-        {
-            hands = true;
-        }
+
     }
 }
