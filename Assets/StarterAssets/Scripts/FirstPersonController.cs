@@ -64,8 +64,8 @@ namespace StarterAssets
         private float _rotationVelocity;
         public float _verticalVelocity;
         public float _terminalVelocity = 53.0f;
-        
-        //DoubleJump
+
+        [Header("Double Jump")]
         public bool _canDoubleJump;
         public bool hasJumped = false; // Flag to check if the player has normal jumped
         public bool hasDoubleJumped = false;  // Flag to check if the player has double jumped
