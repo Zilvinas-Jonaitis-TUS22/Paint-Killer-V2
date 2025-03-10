@@ -239,8 +239,21 @@ namespace StarterAssets
                 sprintPressTime = 0f; // Reset timer when sprint input is released
             }
 
-            // Determine if sprinting
-            isSprinting = _input.sprint && sprintPressTime >= 0.3f;
+            // Only allow sprinting if grounded and sprint input is held long enough
+            if (Grounded)
+            {
+                isSprinting = _input.sprint && sprintPressTime >= 0.3f;
+            }
+            else
+            {
+                isSprinting = false; // Disable sprinting if not grounded
+            }
+
+            // Check if shoot input is pressed and stop sprinting if it is
+            if (_input.shoot)
+            {
+                isSprinting = false;
+            }
 
             // Set target speed based on sprinting or dashing
             float targetSpeed = isSprinting ? SprintSpeed : MoveSpeed;
