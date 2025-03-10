@@ -76,6 +76,13 @@ namespace StarterAssets
         public float _jumpTimeoutDelta;
         public float _fallTimeoutDelta;
 
+        [Header("Sprint")]
+        public bool isSprinting = false;
+        private float sprintPressTime = 0f; // Timer to track sprint input duration
+        public bool isDashing = false;     // Flag for dashing
+        public float DashAmount;
+
+
 #if ENABLE_INPUT_SYSTEM
         private PlayerInput _playerInput;
 #endif
@@ -166,7 +173,7 @@ namespace StarterAssets
             }
         }
 
-        private void Move()
+        /*private void Move()
         {
             // Disable movement input if the player is grappled
             if (isGrappled)
@@ -206,8 +213,87 @@ namespace StarterAssets
 
             // move the player
             _controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
-        }
+        }*/
 
+        //Reworked Sprint with additional functionality:
+        private void Move()
+        {
+            // Disable movement input if the player is grappled
+            if (isGrappled)
+            {
+                return;
+            }
+
+            // Detect sprint input duration
+            if (_input.sprint)
+            {
+                sprintPressTime += Time.deltaTime; // Increment timer while sprint is held
+            }
+            else
+            {
+                if (sprintPressTime > 0 && sprintPressTime < 0.3f)
+                {
+                    // Dash occurs if sprint was pressed for less than 0.3 seconds
+                    isDashing = true;
+                }
+                sprintPressTime = 0f; // Reset timer when sprint input is released
+            }
+
+            // Determine if sprinting
+            isSprinting = _input.sprint && sprintPressTime >= 0.3f;
+
+            // Set target speed based on sprinting or dashing
+            float targetSpeed = isSprinting ? SprintSpeed : MoveSpeed;
+
+            if (isDashing)
+            {
+                targetSpeed = DashAmount; // Use dash speed instead
+                isDashing = false; // Reset dash after applying it once
+            }
+
+            // If no movement input, set target speed to 0 (EXCEPT WHEN SPRINTING)
+            if (_input.move == Vector2.zero && !isSprinting)
+            {
+                targetSpeed = 0.0f;
+            }
+
+            // Current horizontal speed reference
+            float currentHorizontalSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
+
+            float speedOffset = 0.1f;
+            float inputMagnitude = _input.analogMovement ? _input.move.magnitude : 1f;
+
+            // Accelerate or decelerate to target speed
+            if (currentHorizontalSpeed < targetSpeed - speedOffset || currentHorizontalSpeed > targetSpeed + speedOffset)
+            {
+                _speed = Mathf.Lerp(currentHorizontalSpeed, targetSpeed * inputMagnitude, Time.deltaTime * SpeedChangeRate);
+                _speed = Mathf.Round(_speed * 1000f) / 1000f;
+            }
+            else
+            {
+                _speed = targetSpeed;
+            }
+
+            // Normalized input direction
+            Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
+
+            if (_input.move != Vector2.zero)
+            {
+                inputDirection = transform.right * _input.move.x + transform.forward * _input.move.y;
+            }
+
+            if (isSprinting)
+            {
+                // Always move forward while sprinting, relative to player's orientation
+                inputDirection = transform.forward;
+
+                // Reduce sideways movement while sprinting
+                inputDirection += transform.right * (_input.move.x * 0.5f);
+            }
+
+            // Move the player
+            _controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+        }
         /*private void JumpAndGravity()
         {
             if (Grounded)
