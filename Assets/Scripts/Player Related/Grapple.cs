@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using StarterAssets; // For input support
+using UnityEngine.UI; // For UI Image support
 
 public class Grapple : MonoBehaviour
 {
@@ -33,6 +34,9 @@ public class Grapple : MonoBehaviour
     public Transform grappleLineOrigin;
     public Animator armsAnimator;
     public GameObject grappleHead; // NEW: Reference to the grapple head model
+    public Image[] crosshairImages; // Array to store crosshair images
+    private Color defaultCrosshairColor = Color.white;
+    public Color hitCrosshairColor = Color.red;
 
     [Header("Effects")]
     public LineRenderer grappleLine;
@@ -58,8 +62,7 @@ public class Grapple : MonoBehaviour
 
         if (grappleLine != null)
         {
-            grappleLine.positionCount = 2;
-            grappleLine.SetPosition(0, grappleOrigin.position);  // Initialize first point at gun tip
+            grappleLine.positionCount = 0; // Ensure the line is invisible at start
         }
 
         if (grappleHead != null)
@@ -68,8 +71,27 @@ public class Grapple : MonoBehaviour
         }
     }
 
+    private void UpdateCrosshairColor()
+    {
+        RaycastHit hit;
+        bool isHittingTarget = Physics.Raycast(grappleOrigin.position, grappleOrigin.forward, out hit, grappleRange, LayerMask.GetMask("Grappable"));
+
+        // Set crosshair color based on hit detection
+        Color targetColor = isHittingTarget ? hitCrosshairColor : defaultCrosshairColor;
+
+        foreach (Image crosshair in crosshairImages)
+        {
+            if (crosshair != null)
+            {
+                crosshair.color = targetColor;
+            }
+        }
+    }
+
     void Update()
     {
+        UpdateCrosshairColor();
+
         // Handle grapple equipment
         if (_input.grapple)
         {
@@ -149,8 +171,9 @@ public class Grapple : MonoBehaviour
 
     private bool CanGrapple()
     {
-        return grappleCooldownTimer >= grappleCooldownDuration;
+        return grappleCooldownTimer >= grappleCooldownDuration && grappable;
     }
+
 
     void AttemptGrapple()
     {

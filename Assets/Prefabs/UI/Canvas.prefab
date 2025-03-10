@@ -1975,7 +1975,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 5443362919959242532}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2528,6 +2528,10 @@ MonoBehaviour:
   scaleSpeed: 10
   scaleWhenGrappling: {x: 1.2, y: 1.2, z: 1.2}
   scaleWhenNotGrappling: {x: 2, y: 2, z: 2}
+  cinemachineCam: {fileID: 0}
+  normalFOV: 85
+  grappleFOV: 95
+  fovLerpSpeed: 5
 --- !u!1 &8043766874422593825
 GameObject:
   m_ObjectHideFlags: 0
