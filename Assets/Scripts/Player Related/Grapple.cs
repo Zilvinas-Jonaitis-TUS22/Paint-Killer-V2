@@ -10,6 +10,7 @@ public class Grapple : MonoBehaviour
     public bool isGrappling = false;
     public float grappleRange = 15f;
     public float grappleSpeed = 10f;
+    public float grappleLineSpeed = 10f;
     public bool grappable = false;
 
     [Header("Grapple Timing")]
@@ -46,6 +47,7 @@ public class Grapple : MonoBehaviour
     public FirstPersonController firstPersonController;
 
     private Vector3 grapplePoint;
+    private Vector3 lineEndPosition;  // Variable to track the lerping endpoint of the line
 
     void Start()
     {
@@ -56,7 +58,8 @@ public class Grapple : MonoBehaviour
 
         if (grappleLine != null)
         {
-            grappleLine.positionCount = 0;
+            grappleLine.positionCount = 2;
+            grappleLine.SetPosition(0, grappleOrigin.position);  // Initialize first point at gun tip
         }
 
         if (grappleHead != null)
@@ -67,6 +70,7 @@ public class Grapple : MonoBehaviour
 
     void Update()
     {
+        // Handle grapple equipment
         if (_input.grapple)
         {
             isEquipped = true;
@@ -81,19 +85,20 @@ public class Grapple : MonoBehaviour
         // Constantly check if there's a valid grapple surface
         CheckForGrappleSurface();
 
-        Debug.DrawRay(grappleOrigin.position, grappleOrigin.forward * grappleRange, grappable ? Color.green : Color.cyan);
-
+        // Update grapple cooldown if not grappling
         if (!isGrappling)
         {
             grappleCooldownTimer += Time.deltaTime;
         }
 
+        // If the player presses the grapple button and conditions are right, start grappling
         if (_input.grapple && !isGrappling && CanGrapple() && isEquipped && _input.shoot)
         {
             AttemptGrapple();
             armsAnimator.SetBool("Grappling", true);
         }
 
+        // If player is currently grappling
         if (isGrappling)
         {
             grappleTimer += Time.deltaTime;
@@ -117,10 +122,23 @@ public class Grapple : MonoBehaviour
 
             Debug.DrawLine(grappleOrigin.position, grapplePoint, Color.red);
 
+            // End grapple when player is close enough to the grapple point
             if (Vector3.Distance(transform.position, grapplePoint) < 1f)
             {
                 EndGrapple();
             }
+
+            // If the player releases the grapple input but is being pulled, do nothing
+            if (!_input.grapple && grapplePullTriggered && Vector3.Distance(transform.position, grapplePoint) > 1f)
+            {
+                return;
+            }
+        }
+
+        // Check if the player has released the grapple button, then immediately end grappling if no longer being pulled
+        if (!_input.grapple && !grapplePullTriggered && isGrappling)
+        {
+            EndGrapple();
         }
     }
 
@@ -163,8 +181,8 @@ public class Grapple : MonoBehaviour
             if (grappleLine != null)
             {
                 grappleLine.positionCount = 2;
-                grappleLine.SetPosition(0, grappleOrigin.position);
-                grappleLine.SetPosition(1, grapplePoint);
+                grappleLine.SetPosition(0, grappleOrigin.position); // Start at the gun tip
+                lineEndPosition = grappleOrigin.position; // Start at the gun tip as well
             }
 
             if (grappleHead != null)
@@ -176,10 +194,12 @@ public class Grapple : MonoBehaviour
 
     void UpdateGrappleLine()
     {
+        // Smoothly move the line's second point towards the grapple point
         if (grappleLine != null)
         {
-            grappleLine.SetPosition(0, grappleLineOrigin.position);
-            grappleLine.SetPosition(1, grapplePoint);
+            lineEndPosition = Vector3.MoveTowards(lineEndPosition, grapplePoint, grappleLineSpeed * Time.deltaTime);
+            grappleLine.SetPosition(0, grappleLineOrigin.position); // Gun tip stays at the origin
+            grappleLine.SetPosition(1, lineEndPosition); // Line end moves towards the grapple point
         }
     }
 
@@ -191,6 +211,7 @@ public class Grapple : MonoBehaviour
 
     void EndGrapple()
     {
+        // Reset the grapple state
         isGrappling = false;
         grappleTimer = 0f;
         grapplePullTriggered = false; // Reset flag when grapple ends
@@ -209,6 +230,8 @@ public class Grapple : MonoBehaviour
         {
             grappleHead.SetActive(true); // Show the grapple head again when the grapple ends
         }
+
+        armsAnimator.SetBool("Grappling", false);
     }
 
     void CheckForGrappleSurface()
