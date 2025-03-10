@@ -79,8 +79,13 @@ namespace StarterAssets
         [Header("Sprint")]
         public bool isSprinting = false;
         private float sprintPressTime = 0f; // Timer to track sprint input duration
+        [Header("Dash")]
         public bool isDashing = false;     // Flag for dashing
-        public float DashAmount;
+        public float DashAmount = 25;
+        private float lastDashTime = -Mathf.Infinity; // Stores the time of the last dash
+        public float DashCooldown = 1.0f; // Time (in seconds) before the player can dash again
+
+
 
 
 #if ENABLE_INPUT_SYSTEM
@@ -233,14 +238,17 @@ namespace StarterAssets
             {
                 if (sprintPressTime > 0 && sprintPressTime < 0.3f)
                 {
-                    // Dash occurs if sprint was pressed for less than 0.3 seconds
-                    isDashing = true;
+                    // Dash occurs if sprint was pressed for less than 0.3 seconds and cooldown is over
+                    if (Time.time >= lastDashTime + DashCooldown)
+                    {
+                        StartDash();
+                    }
                 }
                 sprintPressTime = 0f; // Reset timer when sprint input is released
             }
 
             // Only allow sprinting if grounded and sprint input is held long enough
-            if (Grounded)
+            if (Grounded && !isDashing)
             {
                 isSprinting = _input.sprint && sprintPressTime >= 0.3f;
             }
@@ -255,17 +263,16 @@ namespace StarterAssets
                 isSprinting = false;
             }
 
-            // Set target speed based on sprinting or dashing
+            // Set target speed based on sprinting, dashing, or normal movement
             float targetSpeed = isSprinting ? SprintSpeed : MoveSpeed;
 
             if (isDashing)
             {
                 targetSpeed = DashAmount; // Use dash speed instead
-                isDashing = false; // Reset dash after applying it once
             }
 
-            // If no movement input, set target speed to 0 (EXCEPT WHEN SPRINTING)
-            if (_input.move == Vector2.zero && !isSprinting)
+            // If no movement input, set target speed to 0 (EXCEPT WHEN SPRINTING OR DASHING)
+            if (_input.move == Vector2.zero && !isSprinting && !isDashing)
             {
                 targetSpeed = 0.0f;
             }
@@ -303,10 +310,33 @@ namespace StarterAssets
                 // Reduce sideways movement while sprinting
                 inputDirection += transform.right * (_input.move.x * 0.5f);
             }
+            else if (isDashing)
+            {
+                // Move in the direction of input.move with a dash
+                inputDirection = transform.right * _input.move.x + transform.forward * _input.move.y;
+            }
 
             // Move the player
             _controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
         }
+
+        // Start Dash Function
+        private void StartDash()
+        {
+            if (!isDashing) // Prevent repeated dashes
+            {
+                isDashing = true;
+                lastDashTime = Time.time; // Record the time of the dash
+                Invoke(nameof(StopDash), 0.15f); // Dash lasts for 0.15 seconds
+            }
+        }
+
+        // Stop Dash Function
+        private void StopDash()
+        {
+            isDashing = false;
+        }
+
         /*private void JumpAndGravity()
         {
             if (Grounded)
