@@ -49,7 +49,7 @@ public class PaintShotgun : MonoBehaviour
     {
         UpdateCrosshairColor();
 
-            if (!isPlayerBusy && !_input.sprint)
+            if (!isPlayerBusy)
             {
                 if (_input.shoot && !GrappleScript.isEquipped)
                 {
@@ -65,7 +65,7 @@ public class PaintShotgun : MonoBehaviour
                 }
             }
 
-            if (ammoLoaded == maximumAmmoLoaded || reserveAmmo == 0 || _input.sprint)
+            if (ammoLoaded == maximumAmmoLoaded || reserveAmmo == 0)
             {
                 isPlayerBusy = false;
                 reloading = false;
