@@ -79,6 +79,16 @@ namespace StarterAssets
         private float sprintPressTime = 0f; // Timer to track sprint input duration
         [Tooltip("Sprint speed of the character in m/s")]
         public float SprintSpeed = 6.0f;
+        public float SprintStrafeFactor = 0.5f;
+        public float AirSprintSpeed = 0.25f; // Speed multiplier for sprinting mid-air
+        [Header("SprintAnimationFix")]
+        public Animator animator; // Reference to the Animator
+        [Header("SpeedLines")]
+        public GameObject speedLines;
+        public float speedLinesScaleSprint = 1.2f;
+        public float speedLinesScaleDash = 1f;
+        public float speedLinesLerpSpeed = 10f;
+        private Vector3 originalSpeedLinesScale;
         [Header("Dash")]
         public bool isDashing = false;     // Flag for dashing
         public float DashAmount = 25;
@@ -125,12 +135,17 @@ namespace StarterAssets
 #if ENABLE_INPUT_SYSTEM
             _playerInput = GetComponent<PlayerInput>();
 #else
-			Debug.LogError("Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
+            Debug.LogError("Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
 #endif
 
             // reset our timeouts on start
             _jumpTimeoutDelta = JumpTimeout;
             _fallTimeoutDelta = FallTimeout;
+
+            if (speedLines != null)
+            {
+                originalSpeedLinesScale = speedLines.transform.localScale;
+            }
         }
 
         private void Update()
@@ -247,14 +262,30 @@ namespace StarterAssets
                 sprintPressTime = 0f; // Reset timer when sprint input is released
             }
 
-            // Only allow sprinting if grounded and sprint input is held long enough
-            if (Grounded && !isDashing)
+            // Sprinting requires sprint input to be held long enough AND the player must be pressing forward
+            if (!isDashing && _input.sprint && sprintPressTime >= 0.3f && _input.move.y > 0)
             {
-                isSprinting = _input.sprint && sprintPressTime >= 0.3f;
+                isSprinting = true;
             }
             else
             {
-                isSprinting = false; // Disable sprinting if not grounded
+                isSprinting = false; // Disable sprinting if not meeting conditions
+            }
+
+            // Update Animator to reflect sprinting state
+            if (animator != null)
+            {
+                animator.SetBool("currentlySprinting", isSprinting);
+
+                // Adjust animation speed while sprinting in the air
+                if (isSprinting)
+                {
+                    animator.speed = Grounded ? 1f : 0.1f; // Ensures animation plays at 0.1 speed while airborne.
+                }
+                else
+                {
+                    animator.speed = 1f; // Reset to default when not sprinting
+                }
             }
 
             // Check if shoot input is pressed and stop sprinting if it is
@@ -265,6 +296,11 @@ namespace StarterAssets
 
             // Set target speed based on sprinting, dashing, or normal movement
             float targetSpeed = isSprinting ? SprintSpeed : MoveSpeed;
+
+            if (!Grounded && isSprinting)
+            {
+                targetSpeed *= AirSprintSpeed; // Reduce sprint speed in air
+            }
 
             if (isDashing)
             {
@@ -308,7 +344,7 @@ namespace StarterAssets
                 inputDirection = transform.forward;
 
                 // Reduce sideways movement while sprinting
-                inputDirection += transform.right * (_input.move.x * 0.5f);
+                inputDirection += transform.right * (_input.move.x * SprintStrafeFactor);
             }
             else if (isDashing)
             {
@@ -318,6 +354,9 @@ namespace StarterAssets
 
             // Move the player
             _controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+
+            // Update speed lines scaling
+            UpdateSpeedLines();
         }
 
         // Start Dash Function
@@ -335,6 +374,27 @@ namespace StarterAssets
         private void StopDash()
         {
             isDashing = false;
+        }
+
+        //Speedlines Stuffz
+        private void UpdateSpeedLines()
+        {
+            if (speedLines != null)
+            {
+                Vector3 targetScale = originalSpeedLinesScale;
+
+                if (isSprinting)
+                {
+                    targetScale *= speedLinesScaleSprint;
+                }
+                else if (isDashing)
+                {
+                    targetScale *= speedLinesScaleDash;
+                }
+
+                // Lerp speed lines to the target scale
+                speedLines.transform.localScale = Vector3.Lerp(speedLines.transform.localScale, targetScale, Time.deltaTime * speedLinesLerpSpeed);
+            }
         }
 
         /*private void JumpAndGravity()
