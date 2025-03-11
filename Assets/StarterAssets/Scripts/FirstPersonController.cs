@@ -14,8 +14,6 @@ namespace StarterAssets
         [Header("Player")]
         [Tooltip("Move speed of the character in m/s")]
         public float MoveSpeed = 4.0f;
-        [Tooltip("Sprint speed of the character in m/s")]
-        public float SprintSpeed = 6.0f;
         [Tooltip("Rotation speed of the character")]
         public float RotationSpeed = 1.0f;
         [Tooltip("Acceleration and deceleration")]
@@ -79,6 +77,8 @@ namespace StarterAssets
         [Header("Sprint")]
         public bool isSprinting = false;
         private float sprintPressTime = 0f; // Timer to track sprint input duration
+        [Tooltip("Sprint speed of the character in m/s")]
+        public float SprintSpeed = 6.0f;
         [Header("Dash")]
         public bool isDashing = false;     // Flag for dashing
         public float DashAmount = 25;
