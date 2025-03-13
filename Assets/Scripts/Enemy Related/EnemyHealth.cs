@@ -15,6 +15,11 @@ public class EnemyHealth : MonoBehaviour
     public Animator spriteAnimator;
     public SpriteRenderer spriteRenderer; // Reference to the SpriteRenderer
 
+    public SpawnNewBasic spawnNewBasicScript;
+    bool isDead = false;
+  
+
+
     void Start()
     {
         currentHealth = maxHealth;
@@ -61,8 +66,9 @@ public class EnemyHealth : MonoBehaviour
             StopCoroutine(flashCoroutine);
         flashCoroutine = StartCoroutine(FlashRedEffect());
 
-        if (currentHealth <= 0)
+        if (currentHealth <= 0 && !isDead) // Only run once
         {
+            isDead = true;
             Die();
         }
     }
@@ -79,6 +85,19 @@ public class EnemyHealth : MonoBehaviour
 
     void Die()
     {
+    
+      
+            spawnNewBasicScript.InstantiateBlendShapeEnemy();
+        
+     
         Destroy(gameObject); // Destroy the enemy
+
     }
+
+    void DestroyNewEnemy()
+    {
+        Destroy(gameObject);
+    }
+   
 }
+
