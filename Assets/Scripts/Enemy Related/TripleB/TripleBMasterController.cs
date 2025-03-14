@@ -19,6 +19,16 @@ public class TripleBMasterController : MonoBehaviour
     // The object representing the flood attack
     public GameObject floodAttackObject;
 
+    [Header("Sonar/Voice Attack")]
+
+    [Header("Minion Spawn")]
+
+    [Header("Ranged Spray Attack")]
+    public GameObject projectilePrefab; // The projectile prefab
+    public Transform projectileSpawnPoint; // The spawn point for the projectiles
+    public float projectileSpeed = 10f; // Speed at which projectiles travel
+    public float sprayAngle = 30f; // Angle between projectiles
+
     [Header("References")]
     private BossHealth _BossHealth;
 
@@ -66,7 +76,6 @@ public class TripleBMasterController : MonoBehaviour
         }
     }
 
-    // Animation Event: Called during the animation to start the flood attack
     public void FloodAttack()
     {
         if (floodAttackObject != null && floodStartPosition != null && floodEndPosition != null)
@@ -87,6 +96,56 @@ public class TripleBMasterController : MonoBehaviour
             endPos = floodStartPosition.position; // Go back to the start position
             floodTimer = 0f; // Reset the timer
             isFlooding = true; // Start flooding back to the start position
+        }
+    }
+
+    public void RangedSprayAttack()
+    {
+        // Debugging: Check if projectilePrefab and projectileSpawnPoint are set
+        if (projectilePrefab == null)
+        {
+            Debug.LogWarning("Projectile prefab is not assigned!");
+            return;
+        }
+
+        if (projectileSpawnPoint == null)
+        {
+            Debug.LogWarning("Projectile spawn point is not assigned!");
+            return;
+        }
+
+        // Find the player and calculate the direction
+        Transform player = GameObject.FindWithTag("Player").transform; // Find the player by tag
+        Vector3 directionToPlayer = (player.position - transform.position).normalized; // Calculate direction towards player
+
+        // Launch 5 projectiles at different angles
+        LaunchProjectile(directionToPlayer); // 0 degree offset, directly at the player
+        LaunchProjectile(Quaternion.Euler(0, sprayAngle, 0) * directionToPlayer); // 30 degree offset to the right
+        LaunchProjectile(Quaternion.Euler(0, -sprayAngle, 0) * directionToPlayer); // 30 degree offset to the left
+        LaunchProjectile(Quaternion.Euler(0, sprayAngle * 2, 0) * directionToPlayer); // 60 degree offset to the right
+        LaunchProjectile(Quaternion.Euler(0, -sprayAngle * 2, 0) * directionToPlayer); // 60 degree offset to the left
+    }
+
+    private void LaunchProjectile(Vector3 direction)
+    {
+        // Ensure a valid spawn point and projectile prefab exist
+        if (projectileSpawnPoint != null && projectilePrefab != null)
+        {
+            // Debugging: Log position and direction
+            Debug.Log("Spawning projectile at: " + projectileSpawnPoint.position);
+            Debug.Log("Direction: " + direction);
+
+            GameObject projectile = Instantiate(projectilePrefab, projectileSpawnPoint.position, Quaternion.identity); // Create the projectile at the spawn point
+            Rigidbody projectileRb = projectile.GetComponent<Rigidbody>(); // Get the Rigidbody component
+
+            if (projectileRb != null)
+            {
+                projectileRb.velocity = direction * projectileSpeed; // Set the velocity of the projectile
+            }
+            else
+            {
+                Debug.LogError("Rigidbody is missing on the projectile prefab.");
+            }
         }
     }
 }
