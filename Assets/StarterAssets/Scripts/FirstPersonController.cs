@@ -263,7 +263,7 @@ namespace StarterAssets
             }
 
             // Sprinting requires sprint input to be held long enough AND the player must be pressing forward
-            if (!isDashing && _input.sprint && sprintPressTime >= 0.3f && _input.move.y > 0)
+            if (!isDashing && _input.sprint && _input.move.y > 0)
             {
                 isSprinting = true;
             }
