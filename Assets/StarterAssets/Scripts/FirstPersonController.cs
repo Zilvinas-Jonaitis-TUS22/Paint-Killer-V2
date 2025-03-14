@@ -251,7 +251,7 @@ namespace StarterAssets
             }
             else
             {
-                if (sprintPressTime > 0 && sprintPressTime < 0.3f)
+                if (sprintPressTime > 0 && sprintPressTime < 0.0001f)
                 {
                     // Dash occurs if sprint was pressed for less than 0.3 seconds and cooldown is over
                     if (Time.time >= lastDashTime + DashCooldown)
