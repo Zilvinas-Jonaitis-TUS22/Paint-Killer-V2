@@ -251,7 +251,7 @@ namespace StarterAssets
             }
             else
             {
-                if (sprintPressTime > 0 && sprintPressTime < 0.3f)
+                if (sprintPressTime > 0 && sprintPressTime < 0.0001f)
                 {
                     // Dash occurs if sprint was pressed for less than 0.3 seconds and cooldown is over
                     if (Time.time >= lastDashTime + DashCooldown)
@@ -263,7 +263,7 @@ namespace StarterAssets
             }
 
             // Sprinting requires sprint input to be held long enough AND the player must be pressing forward
-            if (!isDashing && _input.sprint && sprintPressTime >= 0.3f && _input.move.y > 0)
+            if (!isDashing && _input.sprint && _input.move.y > 0)
             {
                 isSprinting = true;
             }
