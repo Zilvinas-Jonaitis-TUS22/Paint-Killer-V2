@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 5422413055163349324}
   - component: {fileID: 8692648015914994207}
   - component: {fileID: 6028254339679044482}
+  - component: {fileID: 7320138186815618825}
   m_Layer: 7
   m_Name: Ranged Thinner Enemy_Crumple
   m_TagString: Untagged
@@ -205,6 +206,25 @@ MonoBehaviour:
   sphereDistance: 0
   damageAmount: 1
   damageInterval: 1
+--- !u!114 &7320138186815618825
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1776607744860996092}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ed33591a4b26d94c902e890c0f445c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pickupOption1: {fileID: 7766178157809975991, guid: c0f4b68660090114d81eea6e45274ae9, type: 3}
+  pickupOption2: {fileID: 7158857027098040943, guid: 85517efe195b37d47b22c360e7dc65ef, type: 3}
+  spawnOption1: 1
+  spawnOption2: 0
+  useDropChance: 0
+  dropChance: 69
+  spawnOffset: {x: 0, y: 0.2, z: 0}
 --- !u!1 &7300490788273193917
 GameObject:
   m_ObjectHideFlags: 0
