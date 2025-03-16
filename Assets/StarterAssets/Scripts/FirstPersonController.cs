@@ -250,7 +250,7 @@ namespace StarterAssets
             }
             else
             {
-                if (sprintPressTime > 0 && sprintPressTime < 0.001f) //make it '< 0.3f' if you want to enable dash, '< 0.001f' to disable.
+                if (sprintPressTime > 0 && sprintPressTime < dashActivationInputPeriod) //make it '< 0.3f' if you want to enable dash, '< 0.001f' to disable.
                 {
                     // Dash occurs if sprint was pressed for less than 0.3 seconds and cooldown is over
                     if (Time.time >= lastDashTime + DashCooldown)
@@ -258,7 +258,7 @@ namespace StarterAssets
                         StartDash();
                     }
                 }
-                sprintPressTime = 0f; // Reset timer when sprint input is released
+                sprintPressTime = 0; // Reset timer when sprint input is released
             }
 
             // Sprinting requires sprint input to be held long enough AND the player must be pressing forward
