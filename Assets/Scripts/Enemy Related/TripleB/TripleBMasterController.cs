@@ -6,17 +6,15 @@ public class TripleBMasterController : MonoBehaviour
     public int meleeDamageAmount = 1;
 
     [Header("Flood Attack")]
-    public float floodAttackDuration = 1.0f; // Duration for the flood attack to rise
-    private bool isFlooding = false; // A flag to prevent simultaneous flooding
-    private float floodTimer = 0f; // Timer to track the flood attack's progress
+    public float floodAttackDuration = 1.0f;
+    private bool isFlooding = false;
+    private float floodTimer = 0f;
 
-    // Positions for flood attack
-    public Transform floodStartPosition; // Reference to the starting position
-    public Transform floodEndPosition;   // Reference to the ending position
-    private Vector3 startPos; // Starting position for the flood attack
-    private Vector3 endPos;   // Ending position for the flood attack
+    public Transform floodStartPosition;
+    public Transform floodEndPosition;
+    private Vector3 startPos;
+    private Vector3 endPos;
 
-    // The object representing the flood attack
     public GameObject floodAttackObject;
 
     [Header("Sonar/Voice Attack")]
@@ -24,23 +22,19 @@ public class TripleBMasterController : MonoBehaviour
     [Header("Minion Spawn")]
 
     [Header("Ranged Spray Attack")]
-    public GameObject projectilePrefab; // The projectile prefab
-    public Transform projectileSpawnPoint; // The spawn point for the projectiles
-    public float projectileSpeed = 10f; // Speed at which projectiles travel
-    public float sprayAngle = 30f; // Angle between projectiles
+    public GameObject projectilePrefab;
+    public Transform projectileSpawnPoint;
+    public float projectileSpeed = 10f;
+    public float sprayAngle = 30f;
+    public float rotationSpeed = 50f; // Speed of rotation around the parent
 
     [Header("References")]
     private BossHealth _BossHealth;
 
     void Start()
     {
-        // Attempt to find and assign all the required components
         _BossHealth = GetComponent<BossHealth>();
-
-        // Optional: Log a message if a component is missing (useful for debugging)
         if (_BossHealth == null) Debug.LogWarning("BossHealth component is missing!", this);
-
-        // Store the original position of the GameObject
         floodAttackObject.transform.position = floodStartPosition.position;
     }
 
@@ -48,30 +42,34 @@ public class TripleBMasterController : MonoBehaviour
     {
         if (isFlooding && floodAttackObject != null)
         {
-            // Update the position of the flood attack object based on the timer and Lerp
             floodTimer += Time.deltaTime;
-
-            // Calculate the normalized time (0 to 1) for lerping
             float lerpValue = Mathf.Clamp01(floodTimer / floodAttackDuration);
             floodAttackObject.transform.position = Vector3.Lerp(startPos, endPos, lerpValue);
 
-            // If the flood attack duration is over, stop the movement and end the flood attack
             if (lerpValue >= 1f)
             {
                 isFlooding = false;
             }
         }
+
+        // Rotate the projectile spawn point around the parent and make it face the player
+        Transform player = FindObjectOfType<CharacterController>()?.transform;
+        if (projectileSpawnPoint != null && player != null)
+        {
+            projectileSpawnPoint.RotateAround(transform.position, Vector3.up, rotationSpeed * Time.deltaTime);
+            projectileSpawnPoint.LookAt(player.position);
+        }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        CharacterController character = other.GetComponent<CharacterController>();
+        if (character != null)
         {
-            PlayerHealth playerHealth = other.GetComponent<PlayerHealth>(); // Get PlayerHealth component
-
+            PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
             if (playerHealth != null)
             {
-                playerHealth.TakeDamage(meleeDamageAmount); // Deal damage to the player
+                playerHealth.TakeDamage(meleeDamageAmount);
             }
         }
     }
@@ -80,28 +78,26 @@ public class TripleBMasterController : MonoBehaviour
     {
         if (floodAttackObject != null && floodStartPosition != null && floodEndPosition != null)
         {
-            startPos = floodStartPosition.position; // Use floodStartPosition for the start position
-            endPos = floodEndPosition.position;     // Use floodEndPosition for the end position
-            floodTimer = 0f; // Reset the timer
-            isFlooding = true; // Start flooding
+            startPos = floodStartPosition.position;
+            endPos = floodEndPosition.position;
+            floodTimer = 0f;
+            isFlooding = true;
         }
     }
 
-    // Call this function to return the flood attack object back to its original position
     public void FloodAttackRemove()
     {
         if (floodAttackObject != null && floodStartPosition != null && floodEndPosition != null)
         {
-            startPos = floodEndPosition.position; // Start at the end position
-            endPos = floodStartPosition.position; // Go back to the start position
-            floodTimer = 0f; // Reset the timer
-            isFlooding = true; // Start flooding back to the start position
+            startPos = floodEndPosition.position;
+            endPos = floodStartPosition.position;
+            floodTimer = 0f;
+            isFlooding = true;
         }
     }
 
     public void RangedSprayAttack()
     {
-        // Debugging: Check if projectilePrefab and projectileSpawnPoint are set
         if (projectilePrefab == null)
         {
             Debug.LogWarning("Projectile prefab is not assigned!");
@@ -114,37 +110,31 @@ public class TripleBMasterController : MonoBehaviour
             return;
         }
 
-        // Find the player and calculate the direction
-        Transform player = GameObject.FindWithTag("Player").transform; // Find the player by tag
-        Vector3 directionToPlayer = (player.position - transform.position).normalized; // Calculate direction towards player
+        Transform player = FindObjectOfType<CharacterController>()?.transform;
+        if (player == null)
+        {
+            Debug.LogWarning("No player with CharacterController found!");
+            return;
+        }
 
-        // Launch 5 projectiles at different angles
-        LaunchProjectile(directionToPlayer); // 0 degree offset, directly at the player
-        LaunchProjectile(Quaternion.Euler(0, sprayAngle, 0) * directionToPlayer); // 30 degree offset to the right
-        LaunchProjectile(Quaternion.Euler(0, -sprayAngle, 0) * directionToPlayer); // 30 degree offset to the left
-        LaunchProjectile(Quaternion.Euler(0, sprayAngle * 2, 0) * directionToPlayer); // 60 degree offset to the right
-        LaunchProjectile(Quaternion.Euler(0, -sprayAngle * 2, 0) * directionToPlayer); // 60 degree offset to the left
+        Vector3 directionToPlayer = (player.position - transform.position).normalized;
+
+        LaunchProjectile(directionToPlayer);
+        LaunchProjectile(Quaternion.Euler(0, sprayAngle, 0) * directionToPlayer);
+        LaunchProjectile(Quaternion.Euler(0, -sprayAngle, 0) * directionToPlayer);
+        LaunchProjectile(Quaternion.Euler(0, sprayAngle * 2, 0) * directionToPlayer);
+        LaunchProjectile(Quaternion.Euler(0, -sprayAngle * 2, 0) * directionToPlayer);
     }
 
     private void LaunchProjectile(Vector3 direction)
     {
-        // Ensure a valid spawn point and projectile prefab exist
         if (projectileSpawnPoint != null && projectilePrefab != null)
         {
-            // Debugging: Log position and direction
-            Debug.Log("Spawning projectile at: " + projectileSpawnPoint.position);
-            Debug.Log("Direction: " + direction);
-
-            GameObject projectile = Instantiate(projectilePrefab, projectileSpawnPoint.position, Quaternion.identity); // Create the projectile at the spawn point
-            Rigidbody projectileRb = projectile.GetComponent<Rigidbody>(); // Get the Rigidbody component
-
+            GameObject projectile = Instantiate(projectilePrefab, projectileSpawnPoint.position, Quaternion.identity);
+            Rigidbody projectileRb = projectile.GetComponent<Rigidbody>();
             if (projectileRb != null)
             {
-                projectileRb.velocity = direction * projectileSpeed; // Set the velocity of the projectile
-            }
-            else
-            {
-                Debug.LogError("Rigidbody is missing on the projectile prefab.");
+                projectileRb.velocity = direction * projectileSpeed;
             }
         }
     }
