@@ -99,8 +99,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2f5943eccb80a541816ca6509ed9a3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 35
-  currentHealth: 35
+  maxHealth: 20
+  currentHealth: 20
   flashDuration: 0.3
   spriteAnimator: {fileID: 6472352158832959409}
   spriteRenderer: {fileID: 7298237267070356440}
@@ -117,12 +117,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf83fb1e70bf46a4dbc1f6b87befa7c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  detectionRadius: 15
+  detectionRadius: 20
   lostSightDuration: 5
   roamRadius: 5
   patrolWaitTime: 3
   stoppingDistance: 2
-  rangedAttackDistance: 12
+  rangedAttackDistance: 20
   pulseSpeed: 2
   pulseIntensity: 0.07
   sprite: {fileID: 1419933321250215666}
@@ -143,7 +143,7 @@ MonoBehaviour:
   projectilePrefab: {fileID: 1874627339108375145, guid: 863dc0bf48ca98442adf78767e123c9f, type: 3}
   firePoint: {fileID: 74614126390595525}
   projectileSpeed: 15.5
-  attackCooldown: 1.68
+  attackCooldown: 1
   gravity: 9.81
   extraLaunchAngle: 30
   lastAttackTime: 0

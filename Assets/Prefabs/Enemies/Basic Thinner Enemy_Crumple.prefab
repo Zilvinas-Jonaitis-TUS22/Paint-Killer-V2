@@ -200,8 +200,8 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: -1372625422
   m_Radius: 0.47
-  m_Speed: 2
-  m_Acceleration: 8
+  m_Speed: 5
+  m_Acceleration: 7
   avoidancePriority: 50
   m_AngularSpeed: 120
   m_StoppingDistance: 0
@@ -226,7 +226,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   detectionRadius: 15
   lostSightDuration: 5
-  roamRadius: 5
+  roamRadius: 4
   patrolWaitTime: 3.5
   stoppingDistance: 2
   pulseSpeed: 2
@@ -244,8 +244,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2f5943eccb80a541816ca6509ed9a3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 10
-  currentHealth: 10
+  maxHealth: 5
+  currentHealth: 5
   flashDuration: 0.3
   spriteAnimator: {fileID: 6499616581530078200}
   spriteRenderer: {fileID: 2922890827184181417}

@@ -94,9 +94,8 @@ namespace StarterAssets
         public float DashAmount = 25;
         private float lastDashTime = -Mathf.Infinity; // Stores the time of the last dash
         public float DashCooldown = 1.0f; // Time (in seconds) before the player can dash again
-
-
-
+        [Tooltip("make it '< 0.3f' if you want to enable dash, '< 0.001f' to disable.")]
+        public float dashActivationInputPeriod = 0.001f;
 
 #if ENABLE_INPUT_SYSTEM
         private PlayerInput _playerInput;
@@ -251,7 +250,7 @@ namespace StarterAssets
             }
             else
             {
-                if (sprintPressTime > 0 && sprintPressTime < 0.3f)
+                if (sprintPressTime > 0 && sprintPressTime < 0.001f) //make it '< 0.3f' if you want to enable dash, '< 0.001f' to disable.
                 {
                     // Dash occurs if sprint was pressed for less than 0.3 seconds and cooldown is over
                     if (Time.time >= lastDashTime + DashCooldown)
@@ -263,7 +262,7 @@ namespace StarterAssets
             }
 
             // Sprinting requires sprint input to be held long enough AND the player must be pressing forward
-            if (!isDashing && _input.sprint && sprintPressTime >= 0.0001f && _input.move.y > 0)
+            if (!isDashing && _input.sprint && sprintPressTime >= dashActivationInputPeriod && _input.move.y > 0)
             {
                 isSprinting = true;
             }
@@ -272,19 +271,32 @@ namespace StarterAssets
                 isSprinting = false; // Disable sprinting if not meeting conditions
             }
 
+            // Interrupt sprint and reset animation speed when grappling
+            if (_input.grapple)
+            {
+                isSprinting = false;
+
+                if (animator != null)
+                {
+                    animator.speed = 1f;  // Reset animation speed
+                }
+            }
+
             // Update Animator to reflect sprinting state
             if (animator != null)
             {
                 animator.SetBool("currentlySprinting", isSprinting);
 
-                // Adjust animation speed while sprinting in the air
-                if (isSprinting)
+                // Adjust animation speed while sprinting in the air ONLY for Sprint animation
+                AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0); // Layer 0
+
+                if (isSprinting && !Grounded && stateInfo.IsName("Sprint"))
                 {
-                    animator.speed = Grounded ? 1f : 0.1f; // Ensures animation plays at 0.1 speed while airborne.
+                    animator.speed = 0.1f;  // Slow down Sprint animation while airborne
                 }
                 else
                 {
-                    animator.speed = 1f; // Reset to default when not sprinting
+                    animator.speed = 1f;  // Reset speed for other animations
                 }
             }
 
