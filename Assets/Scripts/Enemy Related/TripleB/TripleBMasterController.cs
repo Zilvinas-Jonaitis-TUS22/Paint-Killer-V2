@@ -23,11 +23,12 @@ public class TripleBMasterController : MonoBehaviour
 
     [Header("Ranged Spray Attack")]
     public GameObject projectilePrefab;
-    public Transform projectileSpawnPoint;
+    public Transform projectileSpawnPoint; // The actual spawn point for projectiles
+    public Transform projectilePivot; // NEW: The point around which the spawn point rotates
     public float projectileSpeed = 10f;
     public float sprayAngle = 30f;
-    public float rotationSpeed = 50f; // Speed of rotation around the parent
-    public float tiltValue = 3;
+    public float upwardTilt = 3f; // Adjustable upward tilt
+    public float pivotSpeed = 5f; // Speed at which the spawn point pivots around the pivot point
 
     [Header("References")]
     private BossHealth _BossHealth;
@@ -53,30 +54,17 @@ public class TripleBMasterController : MonoBehaviour
             }
         }
 
-        // Find the player
+        // Rotate the projectile spawn point around the pivot to face the player
         Transform player = FindObjectOfType<CharacterController>()?.transform;
-        if (projectileSpawnPoint != null && player != null)
+        if (player != null && projectileSpawnPoint != null && projectilePivot != null)
         {
-            // Get the direction to the player but ignore the Y-axis to prevent tilting
-            Vector3 directionToPlayer = player.position - transform.position;
-            directionToPlayer.y = 0; // Keep rotation level
+            Vector3 directionToPlayer = (player.position - projectilePivot.position).normalized;
+            Quaternion targetRotation = Quaternion.LookRotation(directionToPlayer);
 
-            // Normalize the direction
-            directionToPlayer.Normalize();
-
-            // Calculate the new spawn point position (keep the same distance from parent)
-            float distance = Vector3.Distance(transform.position, projectileSpawnPoint.position);
-            projectileSpawnPoint.position = transform.position + directionToPlayer * distance;
-
-            // Adjust target Y position by tiltValue
-            Vector3 targetPosition = new Vector3(player.position.x, player.position.y + tiltValue, player.position.z);
-
-            // Ensure the spawn point is **always looking at the adjusted target**
-            projectileSpawnPoint.LookAt(targetPosition);
+            // Apply rotation to the spawn point around the pivot
+            projectilePivot.rotation = Quaternion.Slerp(projectilePivot.rotation, targetRotation, Time.deltaTime * pivotSpeed);
         }
     }
-
-
 
     private void OnTriggerEnter(Collider other)
     {
@@ -134,13 +122,19 @@ public class TripleBMasterController : MonoBehaviour
             return;
         }
 
-        Vector3 directionToPlayer = (player.position - transform.position).normalized;
+        // Get base direction towards the player
+        Vector3 baseDirection = (player.position - projectileSpawnPoint.position).normalized;
 
-        LaunchProjectile(directionToPlayer);
-        LaunchProjectile(Quaternion.Euler(0, sprayAngle, 0) * directionToPlayer);
-        LaunchProjectile(Quaternion.Euler(0, -sprayAngle, 0) * directionToPlayer);
-        LaunchProjectile(Quaternion.Euler(0, sprayAngle * 2, 0) * directionToPlayer);
-        LaunchProjectile(Quaternion.Euler(0, -sprayAngle * 2, 0) * directionToPlayer);
+        // Apply an upward tilt
+        baseDirection.y += Mathf.Tan(upwardTilt * Mathf.Deg2Rad);
+        baseDirection.Normalize();
+
+        // Spawn projectiles with spray angles
+        LaunchProjectile(baseDirection);
+        LaunchProjectile(Quaternion.Euler(0, sprayAngle, 0) * baseDirection);
+        LaunchProjectile(Quaternion.Euler(0, -sprayAngle, 0) * baseDirection);
+        LaunchProjectile(Quaternion.Euler(0, sprayAngle * 2, 0) * baseDirection);
+        LaunchProjectile(Quaternion.Euler(0, -sprayAngle * 2, 0) * baseDirection);
     }
 
     private void LaunchProjectile(Vector3 direction)
