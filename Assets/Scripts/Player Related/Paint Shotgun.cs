@@ -203,6 +203,12 @@ public class PaintShotgun : MonoBehaviour
                 enemy.TakeDamage(damage);
                 //Debug.Log(damage);
             }
+            BossHealth enemyboss = hit.collider.GetComponent<BossHealth>();
+            if (enemyboss != null)
+            {
+                enemyboss.TakeDamage(damage);
+                //Debug.Log(damage);
+            }
         }
     }
 

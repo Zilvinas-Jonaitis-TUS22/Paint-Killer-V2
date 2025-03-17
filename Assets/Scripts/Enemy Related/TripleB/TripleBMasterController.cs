@@ -9,32 +9,40 @@ public class TripleBMasterController : MonoBehaviour
     public float floodAttackDuration = 1.0f;
     private bool isFlooding = false;
     private float floodTimer = 0f;
-
     public Transform floodStartPosition;
     public Transform floodEndPosition;
     private Vector3 startPos;
     private Vector3 endPos;
-
     public GameObject floodAttackObject;
 
     [Header("Sonar/Voice Attack")]
+    public int sonarLimit = 0;
+    public GameObject sonarProjectilePrefab;
+    public Transform sonarSpawnPoint; // Where the sonar projectile spawns
+    public Transform sonarPivot; // The pivot point for aiming
+    public float sonarProjectileSpeed = 15f; // Speed of the sonar attack
+    public float sonarUpwardTilt = 5f; // Adjustable upward tilt
+    public float sonarPivotSpeed = 3f; // Speed of the pivot rotation
 
     [Header("Minion Spawn")]
 
     [Header("Ranged Spray Attack")]
     public GameObject projectilePrefab;
-    public Transform projectileSpawnPoint; // The actual spawn point for projectiles
-    public Transform projectilePivot; // NEW: The point around which the spawn point rotates
+    public Transform projectileSpawnPoint;
+    public Transform projectilePivot;
     public float projectileSpeed = 10f;
     public float sprayAngle = 30f;
-    public float upwardTilt = 3f; // Adjustable upward tilt
-    public float pivotSpeed = 5f; // Speed at which the spawn point pivots around the pivot point
+    public float upwardTilt = 3f;
+    public float pivotSpeed = 5f;
 
     [Header("References")]
     private BossHealth _BossHealth;
+    private Animator Animator;
 
     void Start()
     {
+        Animator = GetComponent<Animator>();
+        if (Animator == null) Debug.LogWarning("Animator component is missing!", this);
         _BossHealth = GetComponent<BossHealth>();
         if (_BossHealth == null) Debug.LogWarning("BossHealth component is missing!", this);
         floodAttackObject.transform.position = floodStartPosition.position;
@@ -54,15 +62,19 @@ public class TripleBMasterController : MonoBehaviour
             }
         }
 
-        // Rotate the projectile spawn point around the pivot to face the player
-        Transform player = FindObjectOfType<CharacterController>()?.transform;
-        if (player != null && projectileSpawnPoint != null && projectilePivot != null)
-        {
-            Vector3 directionToPlayer = (player.position - projectilePivot.position).normalized;
-            Quaternion targetRotation = Quaternion.LookRotation(directionToPlayer);
+        AimPivotAtPlayer(projectilePivot, projectileSpawnPoint, upwardTilt, pivotSpeed);
+        AimPivotAtPlayer(sonarPivot, sonarSpawnPoint, sonarUpwardTilt, sonarPivotSpeed);
+    }
 
-            // Apply rotation to the spawn point around the pivot
-            projectilePivot.rotation = Quaternion.Slerp(projectilePivot.rotation, targetRotation, Time.deltaTime * pivotSpeed);
+    private void AimPivotAtPlayer(Transform pivot, Transform spawnPoint, float tilt, float speed)
+    {
+        Transform player = FindObjectOfType<CharacterController>()?.transform;
+        if (player != null && pivot != null && spawnPoint != null)
+        {
+            Vector3 directionToPlayer = (player.position - pivot.position).normalized;
+            Quaternion targetRotation = Quaternion.LookRotation(directionToPlayer);
+            targetRotation *= Quaternion.Euler(-tilt, 0, 0); // Apply upward tilt
+            pivot.rotation = Quaternion.Slerp(pivot.rotation, targetRotation, Time.deltaTime * speed);
         }
     }
 
@@ -103,50 +115,65 @@ public class TripleBMasterController : MonoBehaviour
 
     public void RangedSprayAttack()
     {
-        if (projectilePrefab == null)
+        if (projectilePrefab == null || projectileSpawnPoint == null)
         {
-            Debug.LogWarning("Projectile prefab is not assigned!");
+            Debug.LogWarning("Projectile prefab or spawn point is not assigned!");
             return;
         }
 
-        if (projectileSpawnPoint == null)
-        {
-            Debug.LogWarning("Projectile spawn point is not assigned!");
-            return;
-        }
+        Vector3 baseDirection = projectileSpawnPoint.forward;
 
-        Transform player = FindObjectOfType<CharacterController>()?.transform;
-        if (player == null)
-        {
-            Debug.LogWarning("No player with CharacterController found!");
-            return;
-        }
-
-        // Get base direction towards the player
-        Vector3 baseDirection = (player.position - projectileSpawnPoint.position).normalized;
-
-        // Apply an upward tilt
-        baseDirection.y += Mathf.Tan(upwardTilt * Mathf.Deg2Rad);
-        baseDirection.Normalize();
-
-        // Spawn projectiles with spray angles
-        LaunchProjectile(baseDirection);
-        LaunchProjectile(Quaternion.Euler(0, sprayAngle, 0) * baseDirection);
-        LaunchProjectile(Quaternion.Euler(0, -sprayAngle, 0) * baseDirection);
-        LaunchProjectile(Quaternion.Euler(0, sprayAngle * 2, 0) * baseDirection);
-        LaunchProjectile(Quaternion.Euler(0, -sprayAngle * 2, 0) * baseDirection);
+        LaunchProjectile(baseDirection, projectileSpeed);
+        LaunchProjectile(Quaternion.Euler(0, sprayAngle, 0) * baseDirection, projectileSpeed);
+        LaunchProjectile(Quaternion.Euler(0, -sprayAngle, 0) * baseDirection, projectileSpeed);
+        LaunchProjectile(Quaternion.Euler(0, sprayAngle * 2, 0) * baseDirection, projectileSpeed);
+        LaunchProjectile(Quaternion.Euler(0, -sprayAngle * 2, 0) * baseDirection, projectileSpeed);
     }
 
-    private void LaunchProjectile(Vector3 direction)
+    public void SonarAttack()
+    {
+        if (sonarProjectilePrefab == null || sonarSpawnPoint == null)
+        {
+            Debug.LogWarning("Sonar projectile prefab or spawn point is not assigned!");
+            return;
+        }
+
+        // Fire a single sonar projectile
+        LaunchSonarProjectile(sonarSpawnPoint.forward, sonarProjectileSpeed);
+    }
+
+    private void LaunchProjectile(Vector3 direction, float speed)
     {
         if (projectileSpawnPoint != null && projectilePrefab != null)
         {
-            GameObject projectile = Instantiate(projectilePrefab, projectileSpawnPoint.position, Quaternion.identity);
+            // Instantiate the projectile and set its rotation
+            GameObject projectile = Instantiate(projectilePrefab, projectileSpawnPoint.position, Quaternion.LookRotation(direction));
+
+            // Apply velocity
             Rigidbody projectileRb = projectile.GetComponent<Rigidbody>();
             if (projectileRb != null)
             {
-                projectileRb.velocity = direction * projectileSpeed;
+                projectileRb.velocity = direction * speed;
             }
         }
     }
+
+    private void LaunchSonarProjectile(Vector3 direction, float speed)
+    {
+        if (sonarProjectilePrefab != null && sonarSpawnPoint != null)
+        {
+            // Instantiate the sonar projectile and set its rotation
+            GameObject projectile = Instantiate(sonarProjectilePrefab, sonarSpawnPoint.position, Quaternion.LookRotation(direction));
+
+            // Apply velocity
+            Rigidbody projectileRb = projectile.GetComponent<Rigidbody>();
+            if (projectileRb != null)
+            {
+                projectileRb.velocity = direction * speed;
+            }
+            sonarLimit++;
+            Animator.SetInteger("SonarLimit", sonarLimit);
+        }
+    }
+
 }
