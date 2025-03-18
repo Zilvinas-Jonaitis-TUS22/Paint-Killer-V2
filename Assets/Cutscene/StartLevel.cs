@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.SceneManagement;
@@ -18,11 +19,19 @@ public class StartLevel : MonoBehaviour
         }
     }
 
+    IEnumerator LoadSceneAsync()
+    {
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
+        while (!asyncLoad.isDone)
+        {
+            yield return null;
+        }
+    }
     void OnTimelineFinished(PlayableDirector director)
     {
         if (director == timeline)
         {
-            SceneManager.LoadScene(sceneName);
+            StartCoroutine(LoadSceneAsync());
         }
     }
 }
