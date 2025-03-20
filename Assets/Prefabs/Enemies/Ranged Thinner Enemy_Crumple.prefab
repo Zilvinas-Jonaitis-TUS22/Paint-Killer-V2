@@ -105,6 +105,7 @@ MonoBehaviour:
   spriteAnimator: {fileID: 6472352158832959409}
   spriteRenderer: {fileID: 7298237267070356440}
   spawnNewBasicScript: {fileID: 5469408516834391557}
+  ParticleSystem: {fileID: 0}
 --- !u!114 &4359320319326606592
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -403,7 +404,7 @@ Transform:
   m_GameObject: {fileID: 8349943252744733708}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.01, y: 0.251, z: 0.04}
+  m_LocalPosition: {x: -0.01, y: 0.301, z: 0.04}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []

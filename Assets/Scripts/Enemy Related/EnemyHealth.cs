@@ -16,6 +16,7 @@ public class EnemyHealth : MonoBehaviour
     public SpriteRenderer spriteRenderer; // Reference to the SpriteRenderer
 
     public SpawnNewBasic spawnNewBasicScript;
+    public ParticleSystem ParticleSystem;
     bool isDead = false;
   
 
@@ -23,6 +24,7 @@ public class EnemyHealth : MonoBehaviour
     void Start()
     {
         currentHealth = maxHealth;
+     
     }
 
     void Update()
@@ -85,13 +87,24 @@ public class EnemyHealth : MonoBehaviour
 
     void Die()
     {
-    
-      
-            spawnNewBasicScript.InstantiateBlendShapeEnemy();
-        
-     
-        Destroy(gameObject); // Destroy the enemy
+        if (ParticleSystem != null)
+        {
+            ParticleSystem.Play(); // Play the particle system
+            Debug.Log("Particle system played");
+        }
 
+        spawnNewBasicScript.InstantiateBlendShapeEnemy();
+
+        StartCoroutine(DestroyAfterDelay(0.1f)); 
+    }
+
+    IEnumerator DestroyAfterDelay(float delay)
+    {
+        // Wait for the specified delay time (1 second)
+        yield return new WaitForSeconds(delay);
+
+        // Destroy the GameObject after the delay
+        Destroy(gameObject);
     }
 
     void DestroyNewEnemy()
