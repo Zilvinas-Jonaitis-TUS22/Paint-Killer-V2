@@ -866,8 +866,8 @@ PlayerSettings:
   apiCompatibilityLevelPerPlatform: {}
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
-  metroPackageName: Paint Killer GAD3
-  metroPackageVersion: 
+  metroPackageName: PaintKillerGAD3
+  metroPackageVersion: 1.0.0.0
   metroCertificatePath: 
   metroCertificatePassword: 
   metroCertificateSubject: 
@@ -875,7 +875,7 @@ PlayerSettings:
   metroCertificateNotAfter: 0000000000000000
   metroApplicationDescription: Paint Killer GAD3
   wsaImages: {}
-  metroTileShortName: 
+  metroTileShortName: Paint Killer GAD3
   metroTileShowName: 0
   metroMediumTileShowName: 0
   metroLargeTileShowName: 0
