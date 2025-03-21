@@ -4,8 +4,8 @@ using System.Collections;
 public class BossHealth : MonoBehaviour
 {
     [Header("Health")]
-    public float maxHealth = 7;
-    public float currentHealth = 7;
+    public float maxHealth = 120;
+    public float currentHealth = 120;
 
     [Header("Red Flash Effect")]
     public float flashDuration = 0.5f; // Time to stay red

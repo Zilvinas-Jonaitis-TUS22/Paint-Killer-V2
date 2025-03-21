@@ -41,15 +41,17 @@ namespace StarterAssets
 			}
 		}
 
-		public void OnJump(InputValue value)
-		{
-			JumpInput(value.isPressed);
-		}
+		
 
 		public void OnSprint(InputValue value)
 		{
 			SprintInput(value.isPressed);
 		}
+
+        public void OnJump(InputValue value)
+        {
+            JumpInput(value.isPressed);
+        }
 
         public void OnShoot(InputValue value)
         {
@@ -77,15 +79,17 @@ namespace StarterAssets
 			look = newLookDirection;
 		}
 
-		public void JumpInput(bool newJumpState)
-		{
-			jump = newJumpState;
-		}
+		
 
 		public void SprintInput(bool newSprintState)
 		{
 			sprint = newSprintState;
 		}
+
+        public void JumpInput(bool newJumpState)
+        {
+            jump = newJumpState;
+        }
 
         public void ShootInput(bool newShootState)
         {
