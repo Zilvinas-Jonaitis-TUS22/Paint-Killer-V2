@@ -388,7 +388,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5470898650879800585}
   - component: {fileID: 5469408516834391557}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: EnemyCrumpleSpawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}

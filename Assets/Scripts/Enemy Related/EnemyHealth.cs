@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.AI;
 
 public class EnemyHealth : MonoBehaviour
 {
@@ -14,7 +15,7 @@ public class EnemyHealth : MonoBehaviour
     [Header("References")]
     public Animator spriteAnimator;
     public SpriteRenderer spriteRenderer; // Reference to the SpriteRenderer
-
+    private NavMeshAgent navMeshAgent;
     public SpawnNewBasic spawnNewBasicScript;
     public ParticleSystem ParticleSystem;
     bool isDead = false;
@@ -24,6 +25,7 @@ public class EnemyHealth : MonoBehaviour
     void Start()
     {
         currentHealth = maxHealth;
+        navMeshAgent = GetComponent<NavMeshAgent>();
      
     }
 
@@ -87,30 +89,26 @@ public class EnemyHealth : MonoBehaviour
 
     void Die()
     {
+        StopMovement(); // Ensure enemy stops moving
+
         if (ParticleSystem != null)
         {
-            ParticleSystem.Play(); // Play the particle system
-            Debug.Log("Particle system played");
+            ParticleSystem.Play();
         }
 
         spawnNewBasicScript.InstantiateBlendShapeEnemy();
 
-        StartCoroutine(DestroyAfterDelay(0.1f)); 
+        Destroy(gameObject); // Destroy enemy immediately after playing effects
     }
 
-    IEnumerator DestroyAfterDelay(float delay)
+    void StopMovement()
     {
-        // Wait for the specified delay time (1 second)
-        yield return new WaitForSeconds(delay);
-
-        // Destroy the GameObject after the delay
-        Destroy(gameObject);
+       
+            navMeshAgent.isStopped = true;  // Completely stop navigation
+            navMeshAgent.velocity = Vector3.zero; // Ensure no lingering movement
+        
     }
 
-    void DestroyNewEnemy()
-    {
-        Destroy(gameObject);
-    }
    
 }
 
