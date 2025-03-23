@@ -12,10 +12,14 @@ public class SpawnNewBasic : MonoBehaviour
 
     public Material basicMaterial;
     public Material rangedMaterial;
+
+    public SelfDestruct selfDestruct;
+
  
     public void InstantiateBlendShapeEnemy()
     {
      
+        selfDestruct.EnemyTypeAudio(enemyType);
         Quaternion newRotation = Quaternion.Euler(90, -180, 0);
         GameObject newEnemy = Instantiate(enemyPrefab, transform.position, newRotation);
         enemyRenderer = newEnemy.GetComponent<SkinnedMeshRenderer>();
