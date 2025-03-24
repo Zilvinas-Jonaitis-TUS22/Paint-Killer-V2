@@ -49,6 +49,8 @@ public class TripleBMasterController : MonoBehaviour
     private BossHealth _BossHealth;
     private Animator Animator;
 
+    private bool isAttackSequenceActive = false;
+
     void Start()
     {
         Animator = GetComponent<Animator>();
@@ -74,6 +76,12 @@ public class TripleBMasterController : MonoBehaviour
 
         AimPivotAtPlayer(projectilePivot, projectileSpawnPoint, upwardTilt, pivotSpeed);
         AimPivotAtPlayer(sonarPivot, sonarSpawnPoint, sonarUpwardTilt, sonarPivotSpeed);
+
+        // Ensure attack sequence is triggered when it's not already active
+        if (_BossHealth != null && _BossHealth.currentHealth > 0 && !isAttackSequenceActive)
+        {
+            StartCoroutine(AttackSequence()); // Start the attack sequence if not already active
+        }
     }
 
     private void AimPivotAtPlayer(Transform pivot, Transform spawnPoint, float tilt, float speed)
@@ -109,76 +117,125 @@ public class TripleBMasterController : MonoBehaviour
 
     public void AnimationEventSonar()
     {
-        Animator.SetTrigger("Sonar Attack"); // Trigger sonar attack animation
+        Animator.SetBool("SonarAttack", true); // Trigger sonar attack animation
     }
 
     public void AnimationEventSpray()
     {
-        Animator.SetTrigger("Spray Attack"); // Trigger spray attack animation
+        Animator.SetBool("SprayAttack", true); // Trigger spray attack animation
     }
 
     public void AnimationEventFlood()
     {
-        Animator.SetTrigger("Flood Attack"); // Trigger flood attack animation
+        Animator.SetBool("FloodAttack", true); // Trigger flood attack animation
     }
 
-    public void AnimationEventDestroyFlood()
+    public void AnimationEventFalseDead()
     {
-        Animator.SetTrigger("Destroy Flood"); // Trigger destroy flood animation
+        Animator.SetBool("Dead", false); // Reset death animation
+    }
+
+    public void AnimationEventFalseSonar()
+    {
+        Animator.SetBool("SonarAttack", false); // Reset sonar attack animation
+    }
+
+    public void AnimationEventFalseSpray()
+    {
+        Animator.SetBool("SprayAttack", false); // Reset spray attack animation
+    }
+
+    public void AnimationEventFalseFlood()
+    {
+        Animator.SetBool("FloodAttack", false); // Reset flood attack animation
+    }
+
+    public void AnimationEventFalseSpawn()
+    {
+        Animator.SetBool("SpawnEnemies", false); // Reset spawn enemies animation
     }
 
     public void AnimationEventSpawn()
     {
-        Animator.SetTrigger("Spawn Enemies"); // Trigger spawn enemies animation
+        Animator.SetBool("SpawnEnemies", true); // Trigger spawn enemies animation
     }
 
     // Attack Sequencer (for internal control, triggered by animation)
-    public void AttackSequencers()
-    {
-        StartCoroutine(AttackSequence());
-    }
-
     private IEnumerator AttackSequence()
     {
+        isAttackSequenceActive = true;
+
         // 1. Spawn enemies
-        AnimationEventSpawn();
-        yield return new WaitForSeconds(spawnAttackDelay); // Wait for delay after spawn
+        yield return StartCoroutine(SpawnEnemiesCoroutine());
+        yield return new WaitForSeconds(spawnAttackDelay);
 
         // 2. Spray attack 2 times
-        for (int i = 0; i < 2; i++)
-        {
-            AnimationEventSpray();
-            yield return new WaitForSeconds(sprayAttackDelay); // Wait after each spray attack
-        }
+        yield return StartCoroutine(SprayAttackCoroutine(2));
+        yield return new WaitForSeconds(sprayAttackDelay);
 
         // 3. Spawn enemies again
-        AnimationEventSpawn();
-        yield return new WaitForSeconds(spawnAttackDelay); // Delay after spawn
+        yield return StartCoroutine(SpawnEnemiesCoroutine());
+        yield return new WaitForSeconds(spawnAttackDelay);
 
         // 4. Spray attack 3 times
-        for (int i = 0; i < 3; i++)
-        {
-            AnimationEventSpray();
-            yield return new WaitForSeconds(sprayAttackDelay); // Wait after each spray attack
-        }
+        yield return StartCoroutine(SprayAttackCoroutine(3));
+        yield return new WaitForSeconds(sprayAttackDelay);
 
         // 5. Summon flood
-        AnimationEventFlood();
-        yield return new WaitForSeconds(floodAttackDelay); // Wait after flood attack
+        yield return StartCoroutine(FloodAttackCoroutine());
+        yield return new WaitForSeconds(floodAttackDelay);
 
         // 6. Sonar attack
-        AnimationEventSonar();
-        yield return new WaitForSeconds(sonarAttackDelay); // Wait after sonar attack
+        yield return StartCoroutine(SonarAttackCoroutine());
+        yield return new WaitForSeconds(sonarAttackDelay);
 
         // 7. Destroy flood
-        AnimationEventDestroyFlood();
+        yield return StartCoroutine(DestroyFloodCoroutine());
 
-        // Repeat the sequence until death
-        if (_BossHealth != null && _BossHealth.currentHealth > 0)
+        isAttackSequenceActive = false;
+    }
+
+    // Coroutine for spawning enemies
+    private IEnumerator SpawnEnemiesCoroutine()
+    {
+        AnimationEventSpawn();
+        yield return null;
+        // Implement minion spawn logic if needed
+        AnimationEventFalseSpawn(); // Reset spawn animation when done
+    }
+
+    // Coroutine for spray attack
+    private IEnumerator SprayAttackCoroutine(int times)
+    {
+        for (int i = 0; i < times; i++)
         {
-            yield return new WaitForSeconds(2f); // Optional delay before restarting the sequence
-            StartCoroutine(AttackSequence());
+            AnimationEventSpray();
+            yield return new WaitForSeconds(sprayAttackDelay);
         }
+        AnimationEventFalseSpray(); // Reset spray animation after finishing
+    }
+
+    // Coroutine for flood attack
+    private IEnumerator FloodAttackCoroutine()
+    {
+        AnimationEventFlood();
+        yield return null;
+        AnimationEventFalseFlood(); // Reset flood animation after finishing
+    }
+
+    // Coroutine for sonar attack
+    private IEnumerator SonarAttackCoroutine()
+    {
+        AnimationEventSonar();
+        yield return null;
+        AnimationEventFalseSonar(); // Reset sonar animation after finishing
+    }
+
+    // Coroutine for destroy flood attack
+    private IEnumerator DestroyFloodCoroutine()
+    {
+        // Implement destroy flood logic here
+        yield return null;
     }
 
     public void FloodAttack()
