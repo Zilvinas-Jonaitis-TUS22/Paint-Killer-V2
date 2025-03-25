@@ -2688,7 +2688,7 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 1
-    functionName: FloodAttackRemove
+    functionName: FloodAttack
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
