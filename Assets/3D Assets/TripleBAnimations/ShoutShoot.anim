@@ -2416,22 +2416,15 @@ AnimationClip:
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
   m_Events:
-  - time: 0.25
-    functionName: 
-    data: 
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0
-    intParameter: 0
-    messageOptions: 0
   - time: 0.5
-    functionName: 
+    functionName: SonarAttack
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.75
-    functionName: 
+  - time: 0.9166667
+    functionName: AnimationEventFalseSonar
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
