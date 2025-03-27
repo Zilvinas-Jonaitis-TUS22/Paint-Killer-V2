@@ -10,6 +10,7 @@ public class GunAudio : MonoBehaviour
     public AudioClip reloadGun;
     public AudioClip reloadSlide;
     public AudioClip reloadThump;
+    public AudioClip pullOutReload;
    
 
     public AudioSource audioSource;
@@ -27,6 +28,8 @@ public class GunAudio : MonoBehaviour
     public void GunReload()
     {
         PlaySound(reloadGun);
+
+        Debug.Log("Reloading");
     }
     public void ReloadSlideIn()
     {
@@ -36,9 +39,23 @@ public class GunAudio : MonoBehaviour
     {
         PlaySound(reloadThump);
     }
+    public void PullOutReload()
+    {
+        PlaySound(pullOutReload);
+    }
     private void PlaySound(AudioClip clip)
     {
-        audioSource.PlayOneShot(clip);
+        if (audioSource != null && clip != null)
+        {
+            audioSource.PlayOneShot(clip); // Play the clip without overriding
+        }
     }
-   
+    public void StopAudio()
+    {
+        if (audioSource.isPlaying)
+        {
+            audioSource.Stop();
+        }
+    }
+
 }
