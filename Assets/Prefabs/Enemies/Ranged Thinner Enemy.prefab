@@ -99,8 +99,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2f5943eccb80a541816ca6509ed9a3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 20
-  currentHealth: 20
+  maxHealth: 18
+  currentHealth: 18
   flashDuration: 0.3
   spriteAnimator: {fileID: 6472352158832959409}
   spriteRenderer: {fileID: 7298237267070356440}

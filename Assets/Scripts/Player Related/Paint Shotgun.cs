@@ -10,9 +10,9 @@ public class PaintShotgun : MonoBehaviour
     [Header("Weapon Mechanics")]
     public bool isPlayerBusy = false;
     public bool reloading = false;
-    public int ammoLoaded = 0;
-    public int maximumAmmoLoaded = 7;
-    public int reserveAmmo = 0;
+    public int ammoLoaded = 8;
+    public int maximumAmmoLoaded = 8;
+    public int reserveAmmo = 32;
     public Animator armsAnimator;
     public bool isEquipped = true;
 
@@ -27,12 +27,13 @@ public class PaintShotgun : MonoBehaviour
     [Header("Slug Properties")]
     public Transform slugSpawnPoint;
     public float slugRange = 10f;
-    public float pelletDamage = 1f;
+    public float pelletDamage = 3f;
 
     [Header("Scripts")]
     public CharacterController _controller;
     public StarterAssetsInputs _input;
     public Grapple GrappleScript;
+    public Damagenumber damageNumberScript; // Reference to the Damagenumber script
 
     [Header("Effects")]
     public ParticleSystem muzzleFlash;
@@ -201,7 +202,23 @@ public class PaintShotgun : MonoBehaviour
             if (enemy != null)
             {
                 enemy.TakeDamage(damage);
-                //Debug.Log(damage);
+
+                // Call the Damagenumber script to show the damage
+                if (damageNumberScript != null)
+                {
+                    damageNumberScript.ShowDamageNumber(damage, hit.point); // Pass the damage and hit position
+                }
+            }
+            BossHealth enemyBoss = hit.collider.GetComponent<BossHealth>();
+            if (enemyBoss != null)
+            {
+                enemyBoss.TakeDamage(damage);
+
+                // Call the Damagenumber script to show the damage
+                if (damageNumberScript != null)
+                {
+                    damageNumberScript.ShowDamageNumber(damage, hit.point); // Pass the damage and hit position
+                }
             }
         }
     }
