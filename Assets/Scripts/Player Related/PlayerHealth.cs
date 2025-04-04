@@ -125,7 +125,7 @@ public class PlayerHealth : MonoBehaviour
 
     private IEnumerator AnimateHeartLoss(int oldHealth, int newHealth)
     {
-        Debug.Log($"oldHealth: {oldHealth}, newHealth: {newHealth}, heartSprites.Count: {heartSprites.Count}");
+        //Debug.Log($"oldHealth: {oldHealth}, newHealth: {newHealth}, heartSprites.Count: {heartSprites.Count}");
         for (int i = oldHealth - 1; i >= newHealth && i < heartSprites.Count; i--)
         {
             if (i >= 0 && i < heartSprites.Count)

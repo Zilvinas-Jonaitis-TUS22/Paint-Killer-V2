@@ -26,7 +26,7 @@ public class DropOnDeath : MonoBehaviour
         enemyHealth = GetComponent<EnemyHealth>();
         if (enemyHealth == null)
         {
-            Debug.LogError("EnemyHealth script not found on " + gameObject.name);
+            //Debug.LogError("EnemyHealth script not found on " + gameObject.name);
         }
     }
 
@@ -34,7 +34,7 @@ public class DropOnDeath : MonoBehaviour
     {
         if (!hasDropped && enemyHealth != null && IsEnemyDead())
         {
-            Debug.Log($"Enemy '{gameObject.name}' is dead. Attempting to drop pickup.");
+            //Debug.Log($"Enemy '{gameObject.name}' is dead. Attempting to drop pickup.");
             TryDropPickup();
             hasDropped = true;
         }
@@ -45,7 +45,7 @@ public class DropOnDeath : MonoBehaviour
         // Detect when enemy is dead
         if (enemyHealth.currentHealth <= 0)
         {
-            Debug.Log($"isDead detected as true for enemy: {gameObject.name}");
+            //Debug.Log($"isDead detected as true for enemy: {gameObject.name}");
             return true;
         }
         return false;
@@ -56,11 +56,11 @@ public class DropOnDeath : MonoBehaviour
         if (useDropChance)
         {
             float roll = Random.Range(0f, 100f);
-            Debug.Log($"Drop chance roll: {roll} (Needed: <= {dropChance})");
+            //Debug.Log($"Drop chance roll: {roll} (Needed: <= {dropChance})");
 
             if (roll > dropChance)
             {
-                Debug.Log($"No item dropped for enemy: {gameObject.name} (Roll: {roll}%)");
+                //Debug.Log($"No item dropped for enemy: {gameObject.name} (Roll: {roll}%)");
                 return;
             }
         }
@@ -84,12 +84,12 @@ public class DropOnDeath : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("No pickup option selected or prefab missing.");
+            //Debug.LogWarning("No pickup option selected or prefab missing.");
             return;
         }
 
         // Log and instantiate the selected pickup
-        Debug.Log($"Spawning pickup: {prefabToSpawn.name} at {transform.position + spawnOffset}");
+        //Debug.Log($"Spawning pickup: {prefabToSpawn.name} at {transform.position + spawnOffset}");
         Instantiate(prefabToSpawn, transform.position + spawnOffset, Quaternion.identity);
         hasDropped = true;
     }
@@ -99,7 +99,7 @@ public class DropOnDeath : MonoBehaviour
         // Drop pickup if it hasn't been dropped already
         if (!hasDropped)
         {
-            Debug.Log($"Enemy '{gameObject.name}' destroyed. Checking drop chance on destruction.");
+            //Debug.Log($"Enemy '{gameObject.name}' destroyed. Checking drop chance on destruction.");
             TryDropPickup();
         }
     }

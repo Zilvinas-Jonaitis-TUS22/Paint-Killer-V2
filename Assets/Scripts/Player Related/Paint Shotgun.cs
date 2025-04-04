@@ -39,7 +39,9 @@ public class PaintShotgun : MonoBehaviour
     public ParticleSystem muzzleFlash;
     public ParticleSystem muzzleFlash2;
 
-    
+    [Header("Muzzle Flash Light")]
+    public Light muzzleFlashLight;
+    public float lightDuration = 0.25f;
 
     void Start()
     {
@@ -50,31 +52,31 @@ public class PaintShotgun : MonoBehaviour
     {
         UpdateCrosshairColor();
 
-            if (!isPlayerBusy)
+        if (!isPlayerBusy)
+        {
+            if (_input.shoot && !GrappleScript.isEquipped)
             {
-                if (_input.shoot && !GrappleScript.isEquipped)
-                {
-                    ShootGun();
-                }
-                else
-                {
-                    armsAnimator.SetBool("Shooting", false);
-                }
-                if (_input.reload)
-                {
-                    ReloadGun();
-                }
+                ShootGun();
+            }
+            else
+            {
+                armsAnimator.SetBool("Shooting", false);
             }
 
-            if (ammoLoaded == maximumAmmoLoaded || reserveAmmo == 0)
+            if (_input.reload)
             {
-                isPlayerBusy = false;
-                reloading = false;
-                armsAnimator.SetBool("Reloading", reloading);
+                ReloadGun();
             }
+        }
 
-            armsAnimator.SetBool("Sprinting", _input.sprint);
-        
+        if (ammoLoaded == maximumAmmoLoaded || reserveAmmo == 0)
+        {
+            isPlayerBusy = false;
+            reloading = false;
+            armsAnimator.SetBool("Reloading", reloading);
+        }
+
+        armsAnimator.SetBool("Sprinting", _input.sprint);
     }
 
     public void ExpandCrosshair()
@@ -86,6 +88,7 @@ public class PaintShotgun : MonoBehaviour
     {
         shotgunUI.TriggerNarrow();
     }
+
     public void UnNarrowCrosshair()
     {
         shotgunUI.TriggerUnNarrow();
@@ -96,7 +99,6 @@ public class PaintShotgun : MonoBehaviour
         RaycastHit hit;
         bool isHittingTarget = Physics.Raycast(slugSpawnPoint.position, slugSpawnPoint.forward, out hit, slugRange, LayerMask.GetMask("Hurtable"));
 
-        // Set crosshair color based on hit detection
         Color targetColor = isHittingTarget ? hitCrosshairColor : defaultCrosshairColor;
 
         foreach (Image crosshair in crosshairImages)
@@ -150,10 +152,14 @@ public class PaintShotgun : MonoBehaviour
         {
             ammoLoaded--;
 
-            if (muzzleFlash != null)
+            if (muzzleFlash != null) muzzleFlash.Play();
+            if (muzzleFlash2 != null) muzzleFlash2.Play();
+
+            // Enable light flash
+            if (muzzleFlashLight != null)
             {
-                muzzleFlash.Play();
-                muzzleFlash2.Play();
+                muzzleFlashLight.enabled = true;
+                StartCoroutine(DisableMuzzleFlashLight());
             }
 
             FireRaycast(slugSpawnPoint.position);
@@ -202,24 +208,30 @@ public class PaintShotgun : MonoBehaviour
             if (enemy != null)
             {
                 enemy.TakeDamage(damage);
-
-                // Call the Damagenumber script to show the damage
                 if (damageNumberScript != null)
                 {
-                    damageNumberScript.ShowDamageNumber(damage, hit.point); // Pass the damage and hit position
+                    damageNumberScript.ShowDamageNumber(damage, hit.point);
                 }
             }
+
             BossHealth enemyBoss = hit.collider.GetComponent<BossHealth>();
             if (enemyBoss != null)
             {
                 enemyBoss.TakeDamage(damage);
-
-                // Call the Damagenumber script to show the damage
                 if (damageNumberScript != null)
                 {
-                    damageNumberScript.ShowDamageNumber(damage, hit.point); // Pass the damage and hit position
+                    damageNumberScript.ShowDamageNumber(damage, hit.point);
                 }
             }
+        }
+    }
+
+    private IEnumerator DisableMuzzleFlashLight()
+    {
+        yield return new WaitForSeconds(lightDuration);
+        if (muzzleFlashLight != null)
+        {
+            muzzleFlashLight.enabled = false;
         }
     }
 

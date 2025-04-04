@@ -54,9 +54,9 @@ public class TripleBMasterController : MonoBehaviour
     void Start()
     {
         Animator = GetComponent<Animator>();
-        if (Animator == null) Debug.LogWarning("Animator component is missing!", this);
+        if (Animator == null) //Debug.LogWarning("Animator component is missing!", this);
         _BossHealth = GetComponent<BossHealth>();
-        if (_BossHealth == null) Debug.LogWarning("BossHealth component is missing!", this);
+        if (_BossHealth == null) //Debug.LogWarning("BossHealth component is missing!", this);
         floodAttackObject.transform.position = floodStartPosition.position;
     }
 
@@ -264,7 +264,7 @@ public class TripleBMasterController : MonoBehaviour
     {
         if (sonarProjectilePrefab == null || sonarSpawnPoint == null)
         {
-            Debug.LogWarning("Sonar projectile prefab or spawn point is not assigned!");
+            //Debug.LogWarning("Sonar projectile prefab or spawn point is not assigned!");
             return;
         }
 
@@ -294,7 +294,7 @@ public class TripleBMasterController : MonoBehaviour
     {
         if (projectilePrefab == null || projectileSpawnPoint == null)
         {
-            Debug.LogWarning("Projectile prefab or spawn point is not assigned!");
+            //Debug.LogWarning("Projectile prefab or spawn point is not assigned!");
             return;
         }
 
@@ -327,7 +327,7 @@ public class TripleBMasterController : MonoBehaviour
     {
         if (minionPrefab == null || minionSpawnArea1 == null || minionSpawnArea2 == null)
         {
-            Debug.LogWarning("Minion prefab or spawn areas are not assigned!");
+            //Debug.LogWarning("Minion prefab or spawn areas are not assigned!");
             return;
         }
 

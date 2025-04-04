@@ -29,7 +29,7 @@ public class GunAudio : MonoBehaviour
     {
         PlaySound(reloadGun);
 
-        Debug.Log("Reloading");
+        //Debug.Log("Reloading");
     }
     public void ReloadSlideIn()
     {

@@ -30,7 +30,7 @@ public class ItemPickup : MonoBehaviour
         if (other.CompareTag("Ammo"))
         {
 
-            Debug.Log("picked up ammo");
+            //Debug.Log("picked up ammo");
             playerShotgun.reserveAmmo += ammoAmount;
                 playerShotgun.UpdateAmmoUI();
                 Destroy(other.gameObject);
