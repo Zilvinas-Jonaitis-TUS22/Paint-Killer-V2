@@ -1400,8 +1400,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278235903
+  m_fontColor: {r: 1, g: 0.6987091, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -2560,8 +2560,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageText: {fileID: 5731054475057496794}
+  displayDuration: 1.5
   startColor: {r: 1, g: 0.4356949, b: 0, a: 1}
   endColor: {r: 1, g: 0.31804758, b: 0, a: 1}
+  scaleLerpSpeed: 5
+  fadeDuration: 0.25
 --- !u!95 &32990650042674782
 Animator:
   serializedVersion: 5

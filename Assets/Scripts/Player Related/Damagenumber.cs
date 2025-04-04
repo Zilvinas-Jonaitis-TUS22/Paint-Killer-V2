@@ -3,81 +3,129 @@ using TMPro;
 
 public class Damagenumber : MonoBehaviour
 {
-    public TextMeshProUGUI damageText; // Reference to the TextMeshPro component
-    private float resetTimer = 2f; // Time in seconds to wait before resetting damage text
+    public TextMeshProUGUI damageText;
+
+    [Header("Timing")]
+    public float displayDuration = 2f; // Adjustable display time
+    private float resetTimer;
     private float currentTimer;
 
-    private float accumulatedDamage = 0f; // To store accumulated damage
+    private float accumulatedDamage = 0f;
+    private float lastDisplayedDamage = 0f;
 
-    public Color startColor = Color.white; // The initial color
-    public Color endColor = Color.red; // The color when damage is dealt
-    private float lerpTime = 0f; // To track the lerp progress
+    [Header("Color")]
+    public Color startColor = Color.white;
+    public Color endColor = Color.red;
+    private float lerpTime = 0f;
 
-    private Vector3 initialScale = Vector3.one; // Default scale
-    private Vector3 maxScale = new Vector3(1.4f, 1.4f, 1.4f); // Max scale when damage is registered
+    [Header("Scale Animation")]
+    private Vector3 initialScale = Vector3.one;
+    private Vector3 maxScale = new Vector3(1.2f, 1.2f, 1.2f); // Jump scale
+    public float scaleLerpSpeed = 5f;
+    private bool isScaling = false;
 
-    public float scaleLerpSpeed = 5f; // Speed of the scale lerping (adjustable from Unity editor)
+    [Header("Fade Out")]
+    private bool isFading = false;
+    public float fadeDuration = 1f; // Duration of fade-out
+    private float fadeTimer = 0f;
 
     void Start()
     {
-        currentTimer = resetTimer; // Initialize timer
-        damageText.text = ""; // Make sure damage text starts empty
-        damageText.color = startColor; // Set the initial color
-        transform.localScale = initialScale; // Set the initial scale
+        resetTimer = displayDuration;
+        currentTimer = resetTimer;
+        damageText.text = "";
+        damageText.color = startColor;
+        transform.localScale = initialScale;
     }
 
     void Update()
     {
-        // Lerp the color between startColor and endColor constantly
-        lerpTime += Time.deltaTime * 1.5f; // Adjust the speed of lerping (1.5f can be changed to control speed)
-        damageText.color = Color.Lerp(startColor, endColor, Mathf.PingPong(lerpTime, 1)); // Smooth color transition between the two
+        // Pulse color if not fading
+        if (!isFading)
+        {
+            lerpTime += Time.deltaTime * 1.5f;
+            Color lerpedColor = Color.Lerp(startColor, endColor, Mathf.PingPong(lerpTime, 1));
+            damageText.color = new Color(lerpedColor.r, lerpedColor.g, lerpedColor.b, 1f);
+        }
 
-        // Update the displayed damage value
+        // Update damage display
         if (accumulatedDamage > 0)
         {
-            damageText.text = Mathf.Ceil(accumulatedDamage).ToString(); // Round up the accumulated damage and display it
+            float displayedDamage = Mathf.Ceil(accumulatedDamage);
+            damageText.text = displayedDamage.ToString();
+
+            if (displayedDamage != lastDisplayedDamage)
+            {
+                transform.localScale = maxScale;
+                isScaling = true;
+                lastDisplayedDamage = displayedDamage;
+            }
         }
 
-        // Animate scaling (grow to 1.1 and shrink back to 1)
-        if (currentTimer < resetTimer && transform.localScale != maxScale)
+        // Smoothly scale back to original
+        if (isScaling)
         {
-            transform.localScale = Vector3.Lerp(transform.localScale, maxScale, Time.deltaTime * scaleLerpSpeed); // Smooth scale up
-        }
-        else if (transform.localScale != initialScale)
-        {
-            transform.localScale = Vector3.Lerp(transform.localScale, initialScale, Time.deltaTime * scaleLerpSpeed); // Smooth scale back to normal
+            transform.localScale = Vector3.Lerp(transform.localScale, initialScale, Time.deltaTime * scaleLerpSpeed);
+            if (Vector3.Distance(transform.localScale, initialScale) < 0.01f)
+            {
+                transform.localScale = initialScale;
+                isScaling = false;
+            }
         }
 
-        // Count down the timer
+        // Timer countdown
         if (currentTimer > 0)
         {
             currentTimer -= Time.deltaTime;
         }
-        else
+        else if (!isFading && accumulatedDamage > 0)
         {
-            // Reset the damage number when time is up
-            accumulatedDamage = 0f; // Reset the accumulated damage
-            damageText.text = ""; // Make the text disappear
+            // Start fade-out
+            isFading = true;
+            fadeTimer = 0f;
+        }
+
+        // Handle fading
+        if (isFading)
+        {
+            fadeTimer += Time.deltaTime;
+            float alpha = Mathf.Lerp(1f, 0f, fadeTimer / fadeDuration);
+            Color currentColor = damageText.color;
+            damageText.color = new Color(currentColor.r, currentColor.g, currentColor.b, alpha);
+
+            if (alpha <= 0.01f)
+            {
+                damageText.text = "";
+                accumulatedDamage = 0f;
+                lastDisplayedDamage = 0f;
+                isFading = false;
+            }
         }
     }
 
-    // Call this method to display and accumulate damage
+    // Call this to show damage and reset timer
     public void ShowDamageNumber(float damageAmount, Vector3 position)
     {
-        // If the timer is still running, accumulate the damage
+        resetTimer = displayDuration; // Apply adjustable duration
+
         if (currentTimer > 0)
         {
-            accumulatedDamage += damageAmount; // Add new damage to the accumulated damage
+            accumulatedDamage += damageAmount;
         }
         else
         {
-            accumulatedDamage = damageAmount; // If the timer expired, set the new damage as the initial value
+            accumulatedDamage = damageAmount;
         }
 
-        // Reset the timer to hide the text after a while
-        currentTimer = resetTimer; // Reset the countdown timer
+        currentTimer = resetTimer;
+        lerpTime = 0f;
 
-        // Reset lerpTime for color lerping when new damage is registered
-        lerpTime = 0f; // Reset lerp progress for smooth color transition
+        // Reset fade if currently fading
+        if (isFading)
+        {
+            isFading = false;
+            Color currentColor = damageText.color;
+            damageText.color = new Color(currentColor.r, currentColor.g, currentColor.b, 1f);
+        }
     }
 }

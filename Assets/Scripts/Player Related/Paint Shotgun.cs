@@ -21,7 +21,7 @@ public class PaintShotgun : MonoBehaviour
     public TextMeshProUGUI reserveAmmoText;
     public Image[] crosshairImages; // Array to store crosshair images
     private Color defaultCrosshairColor = Color.white;
-    private Color hitCrosshairColor = Color.red;
+    public Color hitCrosshairColor = Color.red;
     public ShotgunUI shotgunUI;
 
     [Header("Slug Properties")]
