@@ -249,7 +249,7 @@ public class PaintShotgun : MonoBehaviour
     {
         if (ammoLoadedText != null)
         {
-            ammoLoadedText.text = $"{ammoLoaded} / {maximumAmmoLoaded}";
+            ammoLoadedText.text = $"{ammoLoaded}";
         }
 
         if (reserveAmmoText != null)
