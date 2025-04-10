@@ -26,11 +26,17 @@ public class RangedEnemyAI : MonoBehaviour
     public RangedAttack rangedAttack;
     public Animator spriteAnimator;
 
+    [Header("Shooting Audio")]
+    public AudioSource shootAudioSource;
+
     private Transform player;  // Link to the player automatically
     private Vector3 originalPosition;
     private Vector3 lastKnownPosition;
     private bool playerInSight = false;
     private bool searchingForPlayer = false;
+
+  
+
 
     void Start()
     {
@@ -97,6 +103,7 @@ public class RangedEnemyAI : MonoBehaviour
         if (player != null)
         {
             rangedAttack.FireProjectile(player.position); // Fire projectile at player
+            shootAudioSource.Play();
         }
     }
 

@@ -15,13 +15,22 @@ public class SpawnNewBasic : MonoBehaviour
 
     public SelfDestruct selfDestruct;
 
- 
+    public AudioSource dyingAudioSource;
+    public AudioClip basicDeathClip;
+    public AudioClip rangedDeathClip;
+
+
     public void InstantiateBlendShapeEnemy()
     {
      
         selfDestruct.EnemyTypeAudio(enemyType);
         Quaternion newRotation = Quaternion.Euler(90, -180, 0);
         GameObject newEnemy = Instantiate(enemyPrefab, transform.position, newRotation);
+        EnemyDeathAudioPlayer deathAudioPlayer = newEnemy.GetComponent<EnemyDeathAudioPlayer>();
+        if (deathAudioPlayer != null)
+        {
+            deathAudioPlayer.enemyType = enemyType; // Pass the type string to the prefab
+        }
         enemyRenderer = newEnemy.GetComponent<SkinnedMeshRenderer>();
         Light enemyLight = newEnemy.GetComponentInChildren<Light>();
 
@@ -51,7 +60,21 @@ public class SpawnNewBasic : MonoBehaviour
         }
       
     }
+    public void EnemyTypeAudio(string enemyType)
+    {
 
-   
-    
+        if (enemyType == "Basic" && basicDeathClip != null)
+        {
+            dyingAudioSource.clip = basicDeathClip;
+            dyingAudioSource.Play();
+        }
+        else if (enemyType == "Ranged" && rangedDeathClip != null)
+        {
+            dyingAudioSource.clip = rangedDeathClip;
+            dyingAudioSource.Play();
+        }
+    }
+
+
+
 }
