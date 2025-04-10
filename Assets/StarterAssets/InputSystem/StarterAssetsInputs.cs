@@ -26,6 +26,7 @@ namespace StarterAssets
 		[Header("Mouse Cursor Settings")]
 		public bool cursorLocked = true;
 		public bool cursorInputForLook = true;
+		public bool lookingLocked = false;
 
 #if ENABLE_INPUT_SYSTEM
 		public void OnMove(InputValue value)
@@ -76,7 +77,14 @@ namespace StarterAssets
 
 		public void LookInput(Vector2 newLookDirection)
 		{
-			look = newLookDirection;
+			if (!lookingLocked)
+			{
+                look = newLookDirection;
+            }
+			else
+			{
+				look = new Vector2 (0,0);
+			}
 		}
 
 		
