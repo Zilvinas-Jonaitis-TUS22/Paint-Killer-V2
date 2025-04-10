@@ -1,10 +1,30 @@
+﻿using StarterAssets;
 using UnityEngine;
-using UnityEngine.SceneManagement; // For scene management
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public GameObject pauseMenuUI; // Assign your pause menu UI canvas in the inspector
-    private bool isPaused = false;
+    public static bool IsPaused { get; private set; } = false;
+
+    public GameObject pauseMenuUI;
+    public GameObject deathScreenUI;
+    public bool isPaused = false;
+
+    public StarterAssetsInputs starterAssetsInputs;
+
+    private void Start()
+    {
+        // Reset time scale at start to avoid staying paused after reload
+        Time.timeScale = 1f;
+        IsPaused = false;
+        isPaused = false;
+
+        starterAssetsInputs = FindAnyObjectByType<StarterAssetsInputs>();
+
+        if (pauseMenuUI != null) pauseMenuUI.SetActive(false);
+        if (deathScreenUI != null) deathScreenUI.SetActive(false);
+    }
+
 
     void Update()
     {
@@ -19,40 +39,62 @@ public class GameManager : MonoBehaviour
 
     public void ResumeGame()
     {
-        // Null check for pauseMenuUI
         if (pauseMenuUI != null)
-        {
             pauseMenuUI.SetActive(false);
-        }
+
+        starterAssetsInputs.lookingLocked = false;
         Time.timeScale = 1f;
         isPaused = false;
+        IsPaused = false;
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     public void PauseGame()
     {
-        // Null check for pauseMenuUI
+        starterAssetsInputs.lookingLocked = true;
         if (pauseMenuUI != null)
-        {
             pauseMenuUI.SetActive(true);
-        }
+
         Time.timeScale = 0f;
         isPaused = true;
+        IsPaused = true;
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
-    // Function to restart the game (Replay button)
     public void ReplayGame()
     {
-        // Reset the time scale to normal in case the game was paused
         Time.timeScale = 1f;
+        IsPaused = false;
+        isPaused = false;
+        starterAssetsInputs.lookingLocked = false;
 
-        // Reload the current scene
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    // Optional: Call this to quit the game
     public void QuitGame()
     {
         Application.Quit();
         Debug.Log("Game is quitting...");
+    }
+
+    // 🔥 Call this from the health script when the player dies
+    public void ShowDeathScreen()
+    {
+        Time.timeScale = 1f;
+        isPaused = true;
+        IsPaused = true;
+
+        if (deathScreenUI != null)
+        {
+            deathScreenUI.SetActive(true);
+        }
+
+        starterAssetsInputs.lookingLocked = true;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 }

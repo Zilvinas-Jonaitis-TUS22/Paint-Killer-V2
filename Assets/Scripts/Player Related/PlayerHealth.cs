@@ -22,6 +22,7 @@ public class PlayerHealth : MonoBehaviour
     public Sprite fallingHeartSprite;
     public Sprite slashEffectSprite;
     public Sprite healingEffectSprite; // New healing effect sprite
+    public GameManager gameManager;
 
     private List<GameObject> heartSprites = new List<GameObject>();
     private List<GameObject> fallingHearts = new List<GameObject>();
@@ -40,7 +41,7 @@ public class PlayerHealth : MonoBehaviour
     {
         if (health <= 0)
         {
-            deathscreen.SetActive(true);
+            gameManager.ShowDeathScreen();
         }
     }
 
