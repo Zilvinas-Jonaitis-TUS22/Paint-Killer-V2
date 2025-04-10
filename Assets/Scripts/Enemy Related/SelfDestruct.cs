@@ -10,10 +10,13 @@ public class SelfDestruct : MonoBehaviour
     public AudioClip basicSound;
     public AudioClip rangedSound;
     public string enemyType;
-    public TimerTrigger timerTrigger;
   
 
-public void EnemyTypeAudio(string enemyType)
+    private void Start()
+    {
+        
+    }
+    public void EnemyTypeAudio(string enemyType)
     {
         if (enemyType == "Basic")
         {
@@ -27,10 +30,6 @@ public void EnemyTypeAudio(string enemyType)
     public void SelfDestroy()
     {
        
-        if (timerTrigger != null)
-        {
-            timerTrigger.RegisterEnemyKill(enemyType);
-        }
         Destroy(gameObject);
     }
     public void Bling()

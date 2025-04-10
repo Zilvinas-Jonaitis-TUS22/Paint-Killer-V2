@@ -16,6 +16,7 @@ public class BossHealth : MonoBehaviour
     public Slider healthSlider; // Assign in inspector
 
     public BossUI bossUI; // Reference to BossUI script
+    public bool dead;
 
     void Start()
     {
@@ -55,11 +56,22 @@ public class BossHealth : MonoBehaviour
 
     void Die()
     {
+        //Debug.Log("TripleBDeadinBossScript");
+
         if (bossUI != null)
         {
             bossUI.bossDead = true;
         }
 
+        dead = true;
+
+        // Delay destruction to allow TimerTrigger to detect death
+        StartCoroutine(DestroyAfterDelay());
+    }
+
+    IEnumerator DestroyAfterDelay()
+    {
+        yield return new WaitForSeconds(0.1f); // Wait just a bit
         Destroy(gameObject);
     }
 }
