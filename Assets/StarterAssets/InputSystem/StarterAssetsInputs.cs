@@ -72,7 +72,14 @@ namespace StarterAssets
 
         public void MoveInput(Vector2 newMoveDirection)
 		{
-			move = newMoveDirection;
+            if (!lookingLocked)
+            {
+                move = newMoveDirection;
+            }
+            else
+            {
+                move = new Vector2(0, 0);
+            }
 		} 
 
 		public void LookInput(Vector2 newLookDirection)
@@ -91,7 +98,15 @@ namespace StarterAssets
 
 		public void SprintInput(bool newSprintState)
 		{
-			sprint = newSprintState;
+            if (!lookingLocked)
+            {
+                sprint = newSprintState;
+            }
+            else
+            {
+                sprint = false;
+            }
+            
 		}
 
         public void JumpInput(bool newJumpState)
