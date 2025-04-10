@@ -56,7 +56,7 @@ public class BossHealth : MonoBehaviour
 
     void Die()
     {
-        Debug.Log("TripleBDeadinBossScript");
+        //Debug.Log("TripleBDeadinBossScript");
 
         if (bossUI != null)
         {

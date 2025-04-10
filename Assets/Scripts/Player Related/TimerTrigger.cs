@@ -76,7 +76,7 @@ public class TimerTrigger : MonoBehaviour
           } */
         if (hasStarted && bossHealth != null && bossHealth.dead)
         {
-            Debug.Log("TripleBDead");
+            //Debug.Log("TripleBDead");
             StopTimer();
         }
     }
@@ -142,7 +142,7 @@ public class TimerTrigger : MonoBehaviour
     {
         adjustedTimer += timeChange;
         adjustedTimer = Mathf.Max(-timer, adjustedTimer); // ensure total time doesn't go below 0
-        Debug.Log("Adjusted Timer: " + (timer + adjustedTimer));
+        //Debug.Log("Adjusted Timer: " + (timer + adjustedTimer));
     }
 
 }
