@@ -30,7 +30,11 @@ Material:
     m_Ints: []
     m_Floats:
     - _Exposure: 1
+<<<<<<< Updated upstream
     - _Rotation: 12.912029
+=======
+    - _Rotation: 64.70509
+>>>>>>> Stashed changes
     m_Colors:
     - _Tint: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
   m_BuildTextureStacks: []
