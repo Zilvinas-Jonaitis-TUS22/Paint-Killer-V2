@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class BossHealth : MonoBehaviour
@@ -11,36 +12,32 @@ public class BossHealth : MonoBehaviour
     public float flashDuration = 0.5f; // Time to stay red
     private Coroutine flashCoroutine;
 
+    [Header("UI")]
+    public Slider healthSlider; // Assign in inspector
+
+    public BossUI bossUI; // Reference to BossUI script
+
     void Start()
     {
         currentHealth = maxHealth;
-    }
 
-    void Update()
-    {
-        // If 0% health
-        if (currentHealth <= 0)
+        if (healthSlider != null)
         {
-        }
-        // If less than 25% health
-        else if (currentHealth <= (maxHealth / 4) * 1)
-        {
-        }
-        // If less than 75% health
-        else if (currentHealth <= (maxHealth / 4) * 3)
-        {
-        }
-        // If more than 75% health
-        else if (currentHealth > (maxHealth / 4) * 3)
-        {
+            healthSlider.maxValue = maxHealth;
+            healthSlider.value = currentHealth;
         }
     }
 
     public void TakeDamage(float damage)
     {
         currentHealth -= damage;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth); // Prevent negative health
 
-        // Start the red flash effect
+        if (healthSlider != null)
+        {
+            healthSlider.value = currentHealth;
+        }
+
         if (flashCoroutine != null)
             StopCoroutine(flashCoroutine);
         flashCoroutine = StartCoroutine(FlashRedEffect());
@@ -53,16 +50,16 @@ public class BossHealth : MonoBehaviour
 
     IEnumerator FlashRedEffect()
     {
-        //if (spriteRenderer != null)
-        {
-            //spriteRenderer.color = Color.red; // Turn red
-            yield return new WaitForSeconds(flashDuration);
-            //spriteRenderer.color = Color.white; // Reset to normal
-        }
+        yield return new WaitForSeconds(flashDuration);
     }
 
     void Die()
     {
-        Destroy(gameObject); // Destroy the enemy
+        if (bossUI != null)
+        {
+            bossUI.bossDead = true;
+        }
+
+        Destroy(gameObject);
     }
 }
