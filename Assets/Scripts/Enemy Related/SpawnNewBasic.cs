@@ -19,6 +19,10 @@ public class SpawnNewBasic : MonoBehaviour
     public AudioClip basicDeathClip;
     public AudioClip rangedDeathClip;
 
+    public TimerTrigger timerTrigger;
+
+
+
 
     public void InstantiateBlendShapeEnemy()
     {
@@ -33,6 +37,13 @@ public class SpawnNewBasic : MonoBehaviour
         }
         enemyRenderer = newEnemy.GetComponent<SkinnedMeshRenderer>();
         Light enemyLight = newEnemy.GetComponentInChildren<Light>();
+
+        SelfDestruct destructScript = newEnemy.GetComponent<SelfDestruct>();
+        if (destructScript != null)
+        {
+            destructScript.enemyType = enemyType;
+            destructScript.timerTrigger = timerTrigger;
+        }
 
 
         if (enemyType == "Basic")

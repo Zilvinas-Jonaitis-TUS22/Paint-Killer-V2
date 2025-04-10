@@ -5220,7 +5220,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: -1372625422
   m_Radius: 0.56
-  m_Speed: 7
+  m_Speed: 4
   m_Acceleration: 5
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -5506,3 +5506,4 @@ MonoBehaviour:
   dyingAudioSource: {fileID: 0}
   basicDeathClip: {fileID: 0}
   rangedDeathClip: {fileID: 0}
+  timerTrigger: {fileID: 8000347661704140072, guid: 3177ea1c7b87267469ced0f925e054da, type: 3}

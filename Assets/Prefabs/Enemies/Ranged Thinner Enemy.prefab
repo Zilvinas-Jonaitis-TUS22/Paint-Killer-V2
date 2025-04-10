@@ -971,3 +971,7 @@ MonoBehaviour:
   basicMaterial: {fileID: 2100000, guid: fd828ba89e3ea1a4093c16f5f30e12c9, type: 2}
   rangedMaterial: {fileID: 2100000, guid: db070ae6551cb3241a99344ca111a00b, type: 2}
   selfDestruct: {fileID: 5425700341834955685, guid: f779e419b43e8b849b6cff737b5470d7, type: 3}
+  dyingAudioSource: {fileID: 0}
+  basicDeathClip: {fileID: 0}
+  rangedDeathClip: {fileID: 0}
+  timerTrigger: {fileID: 8000347661704140072, guid: 3177ea1c7b87267469ced0f925e054da, type: 3}

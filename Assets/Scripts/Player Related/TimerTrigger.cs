@@ -29,6 +29,9 @@ public class TimerTrigger : MonoBehaviour
     private bool isTiming = false;
     private bool hasStarted = false;
 
+    private int basicKillCount = 0;
+    private int rangedKillCount = 0;
+
     void Start()
     {
         timerText.gameObject.SetActive(false);
@@ -121,6 +124,22 @@ public class TimerTrigger : MonoBehaviour
 
         // If no rank found (timer is higher than all thresholds), return the lowest rank (F rank)
         return lowestRank;
+    }
+    public void RegisterEnemyKill(string enemyType)
+    {
+        Debug.Log($"[KILL] Enemy of type '{enemyType}' killed.");
+        Debug.Log($"[TIMER BEFORE] {timer:F2} seconds");
+        if (enemyType == "Basic")
+        {
+            timer -= 1f; // reward
+        }
+        else if (enemyType == "Ranged")
+        {
+            timer -= 2f; // bigger reward
+        }
+
+        timer = Mathf.Max(0, timer); // prevent negative time
+        Debug.Log($"[TIMER AFTER] {timer:F2} seconds");
     }
 
 }
