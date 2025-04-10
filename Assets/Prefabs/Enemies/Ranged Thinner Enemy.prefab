@@ -111,6 +111,8 @@ MonoBehaviour:
   spriteRenderer: {fileID: 7298237267070356440}
   spawnNewBasicScript: {fileID: 5469408516834391557}
   ParticleSystem: {fileID: 0}
+  enemyType: Ranged
+  timerTrigger: {fileID: 0}
 --- !u!114 &4359320319326606592
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -974,4 +976,3 @@ MonoBehaviour:
   dyingAudioSource: {fileID: 0}
   basicDeathClip: {fileID: 0}
   rangedDeathClip: {fileID: 0}
-  timerTrigger: {fileID: 8000347661704140072, guid: 3177ea1c7b87267469ced0f925e054da, type: 3}

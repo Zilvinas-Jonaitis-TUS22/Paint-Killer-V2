@@ -19,10 +19,6 @@ public class SpawnNewBasic : MonoBehaviour
     public AudioClip basicDeathClip;
     public AudioClip rangedDeathClip;
 
-    public TimerTrigger timerTrigger;
-
-
-
 
     public void InstantiateBlendShapeEnemy()
     {
@@ -42,7 +38,7 @@ public class SpawnNewBasic : MonoBehaviour
         if (destructScript != null)
         {
             destructScript.enemyType = enemyType;
-            destructScript.timerTrigger = timerTrigger;
+            
         }
 
 

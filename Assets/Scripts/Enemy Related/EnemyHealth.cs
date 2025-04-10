@@ -19,11 +19,23 @@ public class EnemyHealth : MonoBehaviour
     public SpawnNewBasic spawnNewBasicScript;
     public ParticleSystem ParticleSystem;
     bool isDead = false;
+
   
+    public string enemyType;
+    public TimerTrigger timerTrigger;
+
 
 
     void Start()
     {
+        if (timerTrigger == null)
+        {
+            timerTrigger = FindObjectOfType<TimerTrigger>();
+            if (timerTrigger == null)
+            {
+                Debug.LogWarning("No TimerTrigger found in the scene!");
+            }
+        }
         currentHealth = maxHealth;
         navMeshAgent = GetComponent<NavMeshAgent>();
      
@@ -90,6 +102,27 @@ public class EnemyHealth : MonoBehaviour
     void Die()
     {
         StopMovement(); // Ensure enemy stops moving
+
+        if (timerTrigger != null)  // Ensure that the reference is set
+        {
+            // Adjust the timer based on the enemy type
+            if (enemyType == "Basic")
+            {
+                //Debug.Log("-3 seconds for Basic enemy");
+                timerTrigger.AdjustTimer(-1f);  // Subtract 3 seconds for Basic enemy
+            }
+            else if (enemyType == "Ranged")
+            {
+                //Debug.Log("-8 seconds for Ranged enemy");
+                timerTrigger.AdjustTimer(-5f);  // Subtract 8 seconds for Ranged enemy
+            }
+
+            // Destroy the enemy object
+            Destroy(gameObject);  // Destroy the enemy object after handling the timer
+           
+        }
+      
+    
 
         if (ParticleSystem != null)
         {

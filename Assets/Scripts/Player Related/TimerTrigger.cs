@@ -20,7 +20,7 @@ public class TimerTrigger : MonoBehaviour
     public GameObject uiElements; // UI & description, shown after timer ends
     public GameObject crosshairElements; // UI crosshair, hidden after timer ends
     public GameObject speedLines;
-    public float timer = 0f;
+    public float timer = 0f; // This will hold the timer value, used to display the timer
     public TextMeshProUGUI rankText;
     public Image rankImageDisplay;
 
@@ -29,8 +29,10 @@ public class TimerTrigger : MonoBehaviour
     private bool isTiming = false;
     private bool hasStarted = false;
 
-    private int basicKillCount = 0;
-    private int rangedKillCount = 0;
+    private float adjustedTimer;
+
+    public BossHealth bossHealth;
+
 
     void Start()
     {
@@ -39,14 +41,18 @@ public class TimerTrigger : MonoBehaviour
         uiElements.SetActive(false);
         rankText.gameObject.SetActive(false);
         rankImageDisplay.gameObject.SetActive(false);
+
+        adjustedTimer = timer;
     }
 
     void Update()
     {
+        
         if (isTiming)
         {
-            timer += Time.deltaTime;
-            timerText.text = FormatTime(timer);
+            timer += Time.deltaTime;  // Keep adding real-time
+            timerText.text = FormatTime(timer + adjustedTimer);
+
         }
 
         Collider[] colliders = Physics.OverlapBox(startZone.bounds.center, startZone.bounds.extents);
@@ -59,31 +65,40 @@ public class TimerTrigger : MonoBehaviour
             }
         }
 
-        colliders = Physics.OverlapBox(endZone.bounds.center, endZone.bounds.extents);
-        foreach (Collider col in colliders)
+        /*  colliders = Physics.OverlapBox(endZone.bounds.center, endZone.bounds.extents);
+          foreach (Collider col in colliders)
+          {
+              if (hasStarted && col.CompareTag("Player"))
+              {
+                  StopTimer();
+                  break;
+              }
+          } */
+        if (hasStarted && bossHealth != null && bossHealth.dead)
         {
-            if (hasStarted && col.CompareTag("Player"))
-            {
-                StopTimer();
-                break;
-            }
+            Debug.Log("TripleBDead");
+            StopTimer();
         }
     }
 
     void StartTimer()
     {
-        hasStarted = true;
-        isTiming = true;
-        timer = 0f;
-        timerText.gameObject.SetActive(true);
-        finalTimeText.gameObject.SetActive(false);
+        if (!hasStarted)
+        {
+            hasStarted = true;
+            isTiming = true;
+            timer = 0f;  // Reset the adjusted timer to 0
+            adjustedTimer = 0f;
+            timerText.gameObject.SetActive(true);
+            finalTimeText.gameObject.SetActive(false);
+        }
     }
 
     void StopTimer()
     {
         isTiming = false;
         timerText.gameObject.SetActive(false);
-        finalTimeText.text = FormatTime(timer);  // Use the formatted time here
+        finalTimeText.text = FormatTime(timer + adjustedTimer);  // Display the final adjusted time
         finalTimeText.gameObject.SetActive(true);
         speedLines.gameObject.SetActive(false);
 
@@ -111,35 +126,23 @@ public class TimerTrigger : MonoBehaviour
 
     Rank GetRank()
     {
-        // Default to lowest rank
         Rank lowestRank = ranks[ranks.Length - 1];
 
         foreach (Rank rank in ranks)
         {
-            if (timer <= rank.timeThreshold)
+            if (timer + adjustedTimer <= rank.timeThreshold)
             {
                 return rank;
             }
         }
 
-        // If no rank found (timer is higher than all thresholds), return the lowest rank (F rank)
         return lowestRank;
     }
-    public void RegisterEnemyKill(string enemyType)
+    public void AdjustTimer(float timeChange)
     {
-        Debug.Log($"[KILL] Enemy of type '{enemyType}' killed.");
-        Debug.Log($"[TIMER BEFORE] {timer:F2} seconds");
-        if (enemyType == "Basic")
-        {
-            timer -= 1f; // reward
-        }
-        else if (enemyType == "Ranged")
-        {
-            timer -= 2f; // bigger reward
-        }
-
-        timer = Mathf.Max(0, timer); // prevent negative time
-        Debug.Log($"[TIMER AFTER] {timer:F2} seconds");
+        adjustedTimer += timeChange;
+        adjustedTimer = Mathf.Max(-timer, adjustedTimer); // ensure total time doesn't go below 0
+        Debug.Log("Adjusted Timer: " + (timer + adjustedTimer));
     }
 
 }
