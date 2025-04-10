@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
@@ -13,6 +13,9 @@ public struct Rank
 
 public class TimerTrigger : MonoBehaviour
 {
+    [Header("Teleportation")]
+    public Transform teleportDestination; // Set this in the Inspector
+
     public BoxCollider startZone;
     public BoxCollider endZone;
     public TextMeshProUGUI timerText;
@@ -65,15 +68,6 @@ public class TimerTrigger : MonoBehaviour
             }
         }
 
-        /*  colliders = Physics.OverlapBox(endZone.bounds.center, endZone.bounds.extents);
-          foreach (Collider col in colliders)
-          {
-              if (hasStarted && col.CompareTag("Player"))
-              {
-                  StopTimer();
-                  break;
-              }
-          } */
         if (hasStarted && bossHealth != null && bossHealth.dead)
         {
             //Debug.Log("TripleBDead");
@@ -114,7 +108,25 @@ public class TimerTrigger : MonoBehaviour
 
         uiElements.SetActive(true);
         crosshairElements.SetActive(false);
+
+        // ✅ Teleport player
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null && teleportDestination != null)
+        {
+            CharacterController controller = player.GetComponent<CharacterController>();
+            if (controller != null)
+            {
+                controller.enabled = false; // Disable to avoid teleport glitch
+                player.transform.position = teleportDestination.position;
+                controller.enabled = true;  // Re-enable after move
+            }
+            else
+            {
+                player.transform.position = teleportDestination.position;
+            }
+        }
     }
+
 
     // Helper function to format time in MM:SS
     string FormatTime(float timeInSeconds)
