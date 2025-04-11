@@ -5305,9 +5305,9 @@ MonoBehaviour:
   pickupOption1: {fileID: 7766178157809975991, guid: c0f4b68660090114d81eea6e45274ae9, type: 3}
   pickupOption2: {fileID: 7158857027098040943, guid: 85517efe195b37d47b22c360e7dc65ef, type: 3}
   spawnOption1: 1
-  spawnOption2: 0
+  spawnOption2: 1
   useDropChance: 1
-  dropChance: 30
+  dropChance: 41.5
   spawnOffset: {x: 0, y: 0.2, z: 0}
 --- !u!114 &4887055657186044671
 MonoBehaviour:
