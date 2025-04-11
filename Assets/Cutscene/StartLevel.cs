@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.SceneManagement;
+
 public class StartLevel : MonoBehaviour
 {
     public PlayableDirector timeline;
@@ -9,6 +10,10 @@ public class StartLevel : MonoBehaviour
 
     void Start()
     {
+        // Lock and hide the cursor
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
         if (timeline != null)
         {
             timeline.stopped += OnTimelineFinished;
@@ -27,6 +32,7 @@ public class StartLevel : MonoBehaviour
             yield return null;
         }
     }
+
     void OnTimelineFinished(PlayableDirector director)
     {
         if (director == timeline)
