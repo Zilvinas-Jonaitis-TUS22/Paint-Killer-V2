@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviour
 
     public GameObject pauseMenuUI;
     public GameObject deathScreenUI;
+    public GameObject controlScreenUI;
+
     public bool isPaused = false;
 
     public StarterAssetsInputs starterAssetsInputs;
@@ -94,6 +96,35 @@ public class GameManager : MonoBehaviour
         }
 
         starterAssetsInputs.lookingLocked = true;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+
+    public void ShowControlsScreen()
+    {
+        starterAssetsInputs.lookingLocked = true;
+        if (controlScreenUI != null)
+            controlScreenUI.SetActive(true);
+        pauseMenuUI.SetActive(false);
+
+        Time.timeScale = 0f;
+        isPaused = true;
+        IsPaused = true;
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+
+    public void ReturnToMenu()
+    {
+        starterAssetsInputs.lookingLocked = true;
+        controlScreenUI.SetActive(false);
+        pauseMenuUI.SetActive(true);
+
+        Time.timeScale = 0f;
+        isPaused = true;
+        IsPaused = true;
+
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
