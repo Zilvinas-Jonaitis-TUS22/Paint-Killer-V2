@@ -31,6 +31,8 @@ public class PlayerHealth : MonoBehaviour
 
     private float heartSpacing = 100f;
 
+    public DamageArrowUI damageArrowUI; // Assign this in inspector
+
     void Start()
     {
         health = maxHealth;
@@ -54,7 +56,7 @@ public class PlayerHealth : MonoBehaviour
         StartCoroutine(ShowHealingEffect(oldHealth, health)); // Trigger the healing effect
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, Transform enemyTransform)
     {
         if (isInvincible)
             return;
@@ -65,6 +67,8 @@ public class PlayerHealth : MonoBehaviour
         StartCoroutine(AnimateHeartLoss(oldHealth, health));
 
         StartCoroutine(InvincibilityTimer());
+
+        damageArrowUI.ShowArrow(enemyTransform);
     }
 
     private IEnumerator InvincibilityTimer()

@@ -47,7 +47,7 @@ public class PlayerHazardDetector : MonoBehaviour
     {
         if (canTakeDamage && playerHealth != null)
         {
-            playerHealth.TakeDamage(1);
+            playerHealth.TakeDamage(1, null);
             Debug.Log("Player took damage from a hazard!");
             StartCoroutine(DamageCooldown());
         }

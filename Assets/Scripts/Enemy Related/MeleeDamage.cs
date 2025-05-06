@@ -6,6 +6,7 @@ using UnityEngine.AI; // For NavMeshAgent
 public class MeleeDamage : MonoBehaviour
 {
     public NavMeshAgent enemyNavMeshAgent; // Link the enemy's NavMeshAgent via the Inspector
+    public Transform selfPos;
     private Transform player; // Link the player object in the Inspector (will be auto-assigned)
     public float sphereRadius = 1f; // Radius of the sphere area
     public float sphereDistance = 1.5f; // Distance from the enemy's main body to position the sphere
@@ -69,7 +70,7 @@ public class MeleeDamage : MonoBehaviour
             PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
             if (playerHealth != null)
             {
-                playerHealth.TakeDamage(damageAmount); // Deal damage to the player
+                playerHealth.TakeDamage(damageAmount, selfPos); // Deal damage to the player
                 lastDamageTime = Time.time; // Update the last damage time
             }
             else

@@ -79,7 +79,7 @@ public class TripleBMasterController : MonoBehaviour
             PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
             if (playerHealth != null)
             {
-                playerHealth.TakeDamage(meleeDamageAmount);
+                playerHealth.TakeDamage(meleeDamageAmount, gameObject.transform);
             }
         }
     }
