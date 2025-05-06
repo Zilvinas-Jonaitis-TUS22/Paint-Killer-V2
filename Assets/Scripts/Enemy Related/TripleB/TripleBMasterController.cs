@@ -7,6 +7,9 @@ public class TripleBMasterController : MonoBehaviour
     public int meleeDamageAmount = 1;
     public bool playerInZone = false;
 
+    [Header("Mechanics")]
+    public ParticleSystem floodParticle;
+
     [Header("Sonar/Voice Attack")]
     public int sonarLimit = 0;
     public GameObject sonarProjectilePrefab;
@@ -45,6 +48,7 @@ public class TripleBMasterController : MonoBehaviour
     void Start()
     {
         Animator = GetComponent<Animator>();
+        floodParticle.Stop();
         _BossHealth = GetComponent<BossHealth>();
     }
 
@@ -112,12 +116,14 @@ public class TripleBMasterController : MonoBehaviour
         yield return new WaitForSeconds(sprayAttackDelay);
 
         yield return StartCoroutine(FloodAttackCoroutine());
+        floodParticle.Play();
         yield return new WaitForSeconds(1f); // kept short delay just in case
 
         yield return StartCoroutine(SonarAttackCoroutine());
         yield return new WaitForSeconds(sonarAttackDelay);
 
         yield return StartCoroutine(DestroyFloodCoroutine());
+        floodParticle.Stop();
 
         isAttackSequenceActive = false;
     }
