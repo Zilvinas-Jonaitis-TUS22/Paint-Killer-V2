@@ -31,8 +31,17 @@ public class DamageArrowUI : MonoBehaviour
 
     void Update()
     {
-        if (isShowing && target != null)
+        if (isShowing)
         {
+            // Hide arrow if the enemy has been destroyed
+            if (target == null)
+            {
+                isShowing = false;
+                if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
+                fadeCoroutine = StartCoroutine(FadeArrow(canvasGroup.alpha, 0f, 0.2f)); // Quick fade out
+                return;
+            }
+
             // Calculate direction to target
             Vector3 toEnemy = target.position - playerTransform.position;
             toEnemy.y = 0f;
@@ -57,6 +66,7 @@ public class DamageArrowUI : MonoBehaviour
             }
         }
     }
+
 
     public void ShowArrow(Transform enemy)
     {
